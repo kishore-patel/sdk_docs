@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ibm_watson_openscale.client &mdash; IBM Watson OpenScale 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            IBM Watson OpenScale
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">IBM Watson OpenScale</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ibm_watson_openscale.client</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ibm_watson_openscale.client</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+
+<span class="c1"># Copyright 2020 IBM All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#      http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="c1">#from .business_applications import BusinessApplications</span>
+<span class="kn">from</span> <span class="nn">.data_marts</span> <span class="kn">import</span> <span class="n">DataMarts</span>
+<span class="kn">from</span> <span class="nn">.data_sets</span> <span class="kn">import</span> <span class="n">DataSets</span>
+<span class="kn">from</span> <span class="nn">.monitor_definitions</span> <span class="kn">import</span> <span class="n">MonitorDefinitions</span>
+<span class="kn">from</span> <span class="nn">.monitor_instances</span> <span class="kn">import</span> <span class="n">MonitorInstances</span>
+<span class="kn">from</span> <span class="nn">.service_providers</span> <span class="kn">import</span> <span class="n">ServiceProviders</span>
+<span class="kn">from</span> <span class="nn">.subscriptions</span> <span class="kn">import</span> <span class="n">Subscriptions</span>
+<span class="kn">from</span> <span class="nn">.integrated_systems</span> <span class="kn">import</span> <span class="n">IntegratedSystems</span>
+<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.supporting_classes.metrics.ai_metrics</span> <span class="kn">import</span> <span class="n">AIMetrics</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.utils.entitlement_client</span> <span class="kn">import</span> <span class="n">EntitlementClient</span>
+<span class="kn">from</span> <span class="nn">.utils.config_util</span> <span class="kn">import</span> <span class="n">ConfigUtil</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.watson_open_scale_v2</span> <span class="kn">import</span> <span class="n">WatsonOpenScaleV2</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.utils</span> <span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span> <span class="nn">ibm_cloud_sdk_core.authenticators</span> <span class="kn">import</span> <span class="n">BearerTokenAuthenticator</span><span class="p">,</span> <span class="n">CloudPakForDataAuthenticator</span><span class="p">,</span> <span class="n">IAMAuthenticator</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.supporting_classes.cp4d_authenticator</span> <span class="kn">import</span> <span class="n">CloudPak40ForDataAuthenticator</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Service</span>
+<span class="c1">##############################################################################</span>
+
+
+<div class="viewcode-block" id="WatsonOpenScaleV2Adapter"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.client.WatsonOpenScaleV2Adapter">[docs]</a><span class="k">class</span> <span class="nc">WatsonOpenScaleV2Adapter</span><span class="p">(</span><span class="n">WatsonOpenScaleV2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Watson OpenScale client.</span>
+
+<span class="sd">        :var version: Returns version of the python library.</span>
+<span class="sd">        :vartype version: str</span>
+
+<span class="sd">        :var authenticator: Returns passed authenticator.</span>
+<span class="sd">        :vartype authenticator: IAMAuthenticator, CloudPakForDataAuthenticator</span>
+
+<span class="sd">        :var data_marts: Manages data_marts module</span>
+<span class="sd">        :vartype data_marts: ibm_watson_openscale.data_marts.DataMarts</span>
+
+<span class="sd">        :var service_providers: Manages service_providers module</span>
+<span class="sd">        :vartype service_providers: ibm_watson_openscale.service_providers.ServiceProviders</span>
+
+<span class="sd">        :var subscriptions: Manages subscriptions module</span>
+<span class="sd">        :vartype subscriptions: ibm_watson_openscale.subscriptions.Subscriptions</span>
+
+<span class="sd">        :var data_sets: Manages data_sets module</span>
+<span class="sd">        :vartype data_sets: ibm_watson_openscale.data_sets.DataSets</span>
+
+<span class="sd">        :var monitor_definitions: Manages monitor_definitions module</span>
+<span class="sd">        :vartype monitor_definitions: ibm_watson_openscale.monitor_definitions.MonitorDefinitions</span>
+
+<span class="sd">        :var monitor_instances: Manages monitor_instances module</span>
+<span class="sd">        :vartype monitor_instances: ibm_watson_openscale.monitor_instances.MonitorInstances</span>
+
+<span class="sd">        :var metrics: Allow you to compute metrics</span>
+<span class="sd">        :vartype metrics: AIMetrics</span>
+
+<span class="sd">        #:var business_applications: Manages business_applications module</span>
+<span class="sd">        #:vartype business_applications: ibm_watson_openscale.business_applications.BusinessApplications</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale import APIClient</span>
+<span class="sd">        &gt;&gt;&gt; client = APIClient(authenticator=authenticator, service_url=service_url) # client will use default service_instance_id</span>
+<span class="sd">        &gt;&gt;&gt; client = APIClient(authenticator, service_url) # client will use default service_url and default service_instance_id</span>
+<span class="sd">        &gt;&gt;&gt; client = APIClient(authenticator=authenticator, service_url=service_url, service_instance_id=service_instance_id)</span>
+<span class="sd">        &gt;&gt;&gt; client = APIClient(authenticator=authenticator, service_url=service_url, service_instance_id=service_instance_id,bedrock_url=bedrock_url ) </span>
+<span class="sd">        &gt;&gt;&gt; client = APIClient(authenticator, service_url, service_instance_id)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WatsonOpenScaleV2Adapter.new_instance"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.client.WatsonOpenScaleV2Adapter.new_instance">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WatsonOpenScaleV2Adapter&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This class method should be used only if you have stored your credentials</span>
+<span class="sd">        in the separate file or in the ENV variable.</span>
+
+<span class="sd">        :param service_name: Unique name of the service to configure.</span>
+<span class="sd">        :paramtype service_name: str</span>
+<span class="sd">        :return: ibm_watson_openscale.APIClient</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale import APIClient</span>
+<span class="sd">        &gt;&gt;&gt; client = APIClient.new_instance(service_name=&quot;openscale-1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; client = APIClient.new_instance(service_name=&quot;openscale-2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; client = APIClient.new_instance(&quot;openscale&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="s2">&quot;service_name&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">service</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">new_instance</span><span class="p">(</span><span class="n">service_name</span><span class="o">=</span><span class="n">service_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">service</span></div>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">authenticator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="s2">&quot;BearerTokenAuthenticator&quot;</span><span class="p">,</span> <span class="s2">&quot;CloudPakForDataAuthenticator&quot;</span><span class="p">,</span>
+                                               <span class="s2">&quot;IAMAuthenticator&quot;</span><span class="p">,</span> <span class="s2">&quot;CloudPak40ForDataAuthenticator&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">service_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">service_instance_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bedrock_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param service_url: URL of the WOS service eg. https://api.aiopenscale.cloud.ibm.com</span>
+<span class="sd">        :type service_url: str (required)</span>
+<span class="sd">        :param service_instance_id: service instance id</span>
+<span class="sd">        :type service_instance_id: str (required)</span>
+<span class="sd">        :type bedrock_url: Foundational services (common-services-route ) url. User needs to get this url from CP4D admin. This url is required only when iam-integration is enabled on CP4D 4.0.x cluster</span>
+<span class="sd">                           Note: This parameter is not required for CP4D version 3.5.x or less</span>
+<span class="sd">        param Authenticator authenticator: The authenticator specifies the authentication mechanism.</span>
+<span class="sd">               Get up to date information from https://github.com/IBM/python-sdk-core/blob/master/README.md</span>
+<span class="sd">               about initializing the authenticator of your choice.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">authenticator</span><span class="p">,</span> <span class="s2">&quot;authenticator&quot;</span><span class="p">,</span> <span class="p">[</span>
+                      <span class="n">BearerTokenAuthenticator</span><span class="p">,</span> <span class="n">CloudPakForDataAuthenticator</span><span class="p">,</span> <span class="n">IAMAuthenticator</span><span class="p">,</span> <span class="n">CloudPak40ForDataAuthenticator</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span><span class="p">()</span>
+
+        <span class="c1"># make use of new authenticator class which works for 3.5.x and 4.x.x(iamintegration=true)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">authenticator</span><span class="p">,</span> <span class="n">CloudPakForDataAuthenticator</span><span class="p">):</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">authenticator</span><span class="o">.</span><span class="n">token_manager</span><span class="o">.</span><span class="n">url</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">authenticator</span><span class="o">.</span><span class="n">token_manager</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">index</span><span class="p">(</span>
+                <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">)]</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">authenticator</span><span class="o">.</span><span class="n">token_manager</span><span class="o">.</span><span class="n">username</span>
+            <span class="n">password</span> <span class="o">=</span> <span class="n">authenticator</span><span class="o">.</span><span class="n">token_manager</span><span class="o">.</span><span class="n">password</span>
+            <span class="n">apikey</span> <span class="o">=</span> <span class="n">authenticator</span><span class="o">.</span><span class="n">token_manager</span><span class="o">.</span><span class="n">apikey</span>
+            <span class="n">authenticator</span> <span class="o">=</span> <span class="n">CloudPak40ForDataAuthenticator</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                                                           <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+                                                           <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+                                                           <span class="n">apikey</span><span class="o">=</span><span class="n">apikey</span><span class="p">,</span>
+                                                           <span class="n">disable_ssl_verification</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                           <span class="n">bedrock_url</span><span class="o">=</span><span class="n">bedrock_url</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">authenticator</span> <span class="o">=</span> <span class="n">authenticator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_instance_id</span> <span class="o">=</span> <span class="n">service_instance_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plan_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_entitlements</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">authenticator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">authenticator</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">authenticator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">validate_type</span><span class="p">(</span><span class="n">service_url</span><span class="p">,</span> <span class="s2">&quot;service_url&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">validate_type</span><span class="p">(</span><span class="n">service_instance_id</span><span class="p">,</span>
+                          <span class="s2">&quot;service_instance_id&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">authenticator</span><span class="p">)</span> <span class="ow">is</span> <span class="n">IAMAuthenticator</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_entitlements</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_marts</span> <span class="o">=</span> <span class="n">DataMarts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service_providers</span> <span class="o">=</span> <span class="n">ServiceProviders</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subscriptions</span> <span class="o">=</span> <span class="n">Subscriptions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_sets</span> <span class="o">=</span> <span class="n">DataSets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">integrated_systems</span> <span class="o">=</span> <span class="n">IntegratedSystems</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">monitor_definitions</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1">#self.business_applications = BusinessApplications(self)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">authenticator</span><span class="p">,</span> <span class="p">(</span><span class="n">BearerTokenAuthenticator</span><span class="p">,</span> <span class="n">CloudPakForDataAuthenticator</span><span class="p">,</span> <span class="n">CloudPak40ForDataAuthenticator</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">service_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Service URL is mandatory to be provided for the token path or CP4D</span>
+                    <span class="k">raise</span> <span class="n">MissingValue</span><span class="p">(</span>
+                        <span class="s2">&quot;service_url&quot;</span><span class="p">,</span> <span class="s2">&quot;Service URL is mandatory to be provided with IAM token or CP4D.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Setting the default service URI if not provided</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">authenticator</span><span class="p">,</span> <span class="p">(</span><span class="n">CloudPakForDataAuthenticator</span><span class="p">,</span> <span class="n">CloudPak40ForDataAuthenticator</span><span class="p">)):</span>
+                <span class="c1"># Taking the Service URL from authenticator in case not provided</span>
+                <span class="n">service_url</span> <span class="o">=</span> <span class="n">authenticator</span><span class="o">.</span><span class="n">token_manager</span><span class="o">.</span><span class="n">url</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span>
+                                                              <span class="mi">24</span><span class="p">]</span> <span class="k">if</span> <span class="n">service_url</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">service_url</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Defaulting to YPPROD for cloud in case Service URL is not provided</span>
+                <span class="n">service_url</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_SERVICE_URL</span> <span class="k">if</span> <span class="n">service_url</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">service_url</span>
+
+            <span class="c1"># Removing training `/` is present from URI</span>
+            <span class="n">service_url</span> <span class="o">=</span> <span class="n">service_url</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span>
+                <span class="n">service_url</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">service_url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span> <span class="k">else</span> <span class="n">service_url</span>
+
+            <span class="c1"># Checking if it is CP4D environment</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_cp4d</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">authenticator</span><span class="p">,</span> <span class="p">(</span><span class="n">CloudPakForDataAuthenticator</span><span class="p">,</span> <span class="n">CloudPak40ForDataAuthenticator</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_cp4d</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">authenticator</span><span class="p">,</span> <span class="n">BearerTokenAuthenticator</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_cp4d</span> <span class="o">=</span> <span class="n">check_if_cp4d</span><span class="p">(</span><span class="n">service_url</span><span class="p">)</span>
+
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_disable_ssl_verification</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_cp4d</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">service_instance_id</span> <span class="o">=</span> <span class="n">get_instance_guid</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">authenticator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cp4d</span><span class="p">,</span> <span class="n">service_url</span><span class="p">)</span> <span class="k">if</span> <span class="n">service_instance_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">service_instance_id</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_service_url</span><span class="p">(</span>
+                <span class="n">is_cp4d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_cp4d</span><span class="p">,</span> <span class="n">service_url</span><span class="o">=</span><span class="n">service_url</span><span class="p">,</span> <span class="n">instance_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">service_instance_id</span><span class="p">)</span>
+
+            <span class="c1"># Check entitlement for Cloud only</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_entitlements</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">authenticator</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="n">CloudPakForDataAuthenticator</span><span class="p">,</span> <span class="n">IAMAuthenticator</span><span class="p">,</span> <span class="n">CloudPak40ForDataAuthenticator</span><span class="p">]:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">authenticator</span><span class="o">.</span><span class="n">token_manager</span><span class="o">.</span><span class="n">get_token</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">authenticator</span><span class="o">.</span><span class="n">bearer_token</span>
+                <span class="n">entitlements</span> <span class="o">=</span> <span class="n">EntitlementClient</span><span class="p">(</span>
+                    <span class="n">service_url</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_instance_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plan_name</span> <span class="o">=</span> <span class="n">entitlements</span><span class="o">.</span><span class="n">is_entitled</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">monitor_instances</span> <span class="o">=</span> <span class="n">MonitorInstances</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">monitor_definitions</span> <span class="o">=</span> <span class="n">MonitorDefinitions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ai_metrics</span> <span class="o">=</span> <span class="n">AIMetrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config_util</span> <span class="o">=</span> <span class="n">ConfigUtil</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_generate_service_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_cp4d</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">service_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">instance_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates service url when it is not provided by the user.</span>
+
+<span class="sd">        :param str service_url: url to the service (required)</span>
+<span class="sd">        :param str instance_id: ID of the service instance (optional)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">instance_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">instance_id</span> <span class="o">=</span> <span class="n">get_instance_guid</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">authenticator</span><span class="p">,</span> <span class="n">is_cp4d</span><span class="o">=</span><span class="n">is_cp4d</span><span class="p">,</span> <span class="n">service_url</span><span class="o">=</span><span class="n">service_url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">service_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;openscale&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_service_url</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service_url</span><span class="p">,</span> <span class="n">instance_id</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_service_url</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service_url</span><span class="p">,</span> <span class="s2">&quot;openscale&quot;</span><span class="p">,</span> <span class="n">instance_id</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">configure_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overloaded base method to configure the service (read service_url and store it).</span>
+<span class="sd">        Additional functionality: dynamically creates additional enums.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">configure_service</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service_url</span><span class="p">,</span> <span class="s2">&quot;service_url&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">instance_id</span> <span class="o">=</span> <span class="n">get_instance_guid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">authenticator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_service_url</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service_url</span><span class="p">,</span> <span class="n">instance_id</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor_definitions</span> <span class="o">=</span> <span class="n">MonitorDefinitions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on May 29, 2023.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

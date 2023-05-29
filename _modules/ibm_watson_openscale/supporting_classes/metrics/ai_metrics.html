@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ibm_watson_openscale.supporting_classes.metrics.ai_metrics &mdash; IBM Watson OpenScale 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            IBM Watson OpenScale
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">IBM Watson OpenScale</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ibm_watson_openscale.supporting_classes.metrics.ai_metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ibm_watson_openscale.supporting_classes.metrics.ai_metrics</h1><div class="highlight"><pre>
+<span></span>
+<span class="c1"># coding: utf-8</span>
+
+<span class="c1"># Copyright 2021 IBM All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#      http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="c1"># TODO: Add parameters validation in every method</span>
+
+<span class="kn">from</span> <span class="nn">ibm_cloud_sdk_core</span> <span class="kn">import</span> <span class="n">BaseService</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.utils.utils</span> <span class="kn">import</span> <span class="n">validate_type</span><span class="p">,</span><span class="n">get</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.supporting_classes.metrics.utils</span> <span class="kn">import</span> <span class="n">is_entitled_on_cloud</span>
+<span class="kn">from</span> <span class="nn">ibm_cloud_sdk_core.authenticators</span> <span class="kn">import</span> <span class="n">BearerTokenAuthenticator</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="c1">#job timeout in seconds</span>
+<span class="n">JOB_TIMEOUT</span> <span class="o">=</span> <span class="mi">300</span>
+
+<div class="viewcode-block" id="AIMetrics"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics">[docs]</a><span class="k">class</span> <span class="nc">AIMetrics</span><span class="p">():</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ai_client</span><span class="p">:</span> <span class="s2">&quot;WatsonOpenScaleV2Adapter&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">ai_client</span><span class="p">,</span> <span class="s2">&quot;ai_client&quot;</span><span class="p">,</span> <span class="n">BaseService</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span> <span class="o">=</span> <span class="n">ai_client</span>
+        <span class="c1">#authenticator.token_manager</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">authenticator</span><span class="p">)</span> <span class="ow">is</span> <span class="n">BearerTokenAuthenticator</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">authenticator</span><span class="o">.</span><span class="n">bearer_token</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">authenticator</span><span class="o">.</span><span class="n">token_manager</span><span class="o">.</span><span class="n">get_token</span><span class="p">()</span>
+                
+        
+<div class="viewcode-block" id="AIMetrics.compute_metrics"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics.compute_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">configuration</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric_aggregator</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute research metrics based on the configuration.</span>
+<span class="sd">        :param SparkSession spark: Spark session object to be used for computing metrics.</span>
+<span class="sd">        :param dict configuration: Configuration for computing metrics.</span>
+<span class="sd">        :param Union[DataFrame, pd.DataFrame] data_frame: data frame containing the data on which metrics to be computed.          </span>
+<span class="sd">        :return: Key/Value pair where key is the metric group name and value is an object consisting of the metric results for all individual metrics.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        </span>
+<span class="sd">        This is how the configuration parameter dict will look like</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        from ibm_metrics_plugin.common.utils.constants import FairnessMetricType</span>
+<span class="sd">        configuration = {}</span>
+<span class="sd">        configuration[&#39;configuration&#39;] = {</span>
+<span class="sd">            &quot;problem_type&quot;: &quot;binary&quot;,</span>
+<span class="sd">            &quot;label_column&quot;: &quot;Risk&quot;,</span>
+<span class="sd">            &quot;fairness&quot;: {</span>
+<span class="sd">                            &quot;metrics_configuration&quot;: {</span>
+<span class="sd">                                FairnessMetricType.SPD.value: {</span>
+<span class="sd">                                    &quot;features&quot;: [ [&quot;Sex&quot;],[&quot;Age&quot;] ]</span>
+<span class="sd">                                },</span>
+<span class="sd">                                FairnessMetricType.SED.value: {</span>
+<span class="sd">                                    &quot;features&quot;: [ [&quot;Sex&quot;],[&quot;Sex&quot;,&quot;Age&quot;] ],</span>
+<span class="sd">                                    &quot;concentration&quot;: 1.0 </span>
+<span class="sd">                                } </span>
+<span class="sd">                            },</span>
+<span class="sd">                            &quot;protected_attributes&quot;: [</span>
+<span class="sd">                                {</span>
+<span class="sd">                                    &quot;feature&quot;: &quot;Sex&quot;,</span>
+<span class="sd">                                    &quot;reference_group&quot;: [&quot;male&quot;]</span>
+<span class="sd">                                },</span>
+<span class="sd">                                {</span>
+<span class="sd">                                    &quot;feature&quot;: &quot;Age&quot;,</span>
+<span class="sd">                                    &quot;reference_group&quot;: [[26, 55],[56,75]]</span>
+<span class="sd">                                }</span>
+<span class="sd">                            ],</span>
+<span class="sd">                            &quot;favourable_label&quot;: [&quot;No Risk&quot;],</span>
+<span class="sd">                            &quot;unfavourable_label&quot;: [&quot;Risk&quot;]</span>
+<span class="sd">                        }</span>
+<span class="sd">        }</span>
+<span class="sd">        </span>
+<span class="sd">        A way you might use me is:</span>
+<span class="sd">        &gt;&gt;&gt; client.ai_metrics.compute_metrics(spark, configuration, data_frame)</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_params</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span><span class="n">data_frame</span><span class="p">,</span><span class="n">metric_aggregator</span><span class="p">,</span><span class="n">configuration</span><span class="p">)</span>        
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metric_manager_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;ibm_metrics_plugin.core.metrics_manager&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MetricManager&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find metric-plugins library to compute metrics. Please install it &quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Set additional configuration information if required</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_additional_configuration</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">is_cp4d</span><span class="p">)</span>
+        
+        <span class="c1">#Allow user to compute metrics only if he has standard plan on cloud</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__check_entitlement</span><span class="p">()</span>
+        
+        <span class="n">metric_manager</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metric_manager_module</span><span class="p">,</span> <span class="s2">&quot;MetricManager&quot;</span><span class="p">)()</span>
+        <span class="k">return</span> <span class="n">metric_manager</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">spark</span><span class="o">=</span><span class="n">spark</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="n">conf</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">metric_aggregator</span><span class="o">=</span><span class="n">metric_aggregator</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="AIMetrics.compute_metrics_as_job"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics.compute_metrics_as_job">[docs]</a>    <span class="k">def</span> <span class="nf">compute_metrics_as_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spark_credentials</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">JOB_TIMEOUT</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Compute research metrics as spark job on remote spark.</span>
+<span class="sd">        </span>
+<span class="sd">        :param dict spark_credentials: Remote spark connection information.</span>
+<span class="sd">        :param dict configuration: Configuration for computing metrics. Configuration also include the information about where to read data from. Eg: Hive or DB2.</span>
+<span class="sd">        :return: Key/Value pair where key is the metric group name and value is an object consisting of the metric results for all individual metrics.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        </span>
+<span class="sd">        This is how the parameters look like</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        spark_credentials = {</span>
+<span class="sd">            &quot;connection&quot;: {</span>
+<span class="sd">                &quot;endpoint&quot;: &quot;&lt;JOB_ENDPOINT&gt;&quot;,</span>
+<span class="sd">                &quot;location_type&quot;: &quot;cpd_iae&quot;,</span>
+<span class="sd">                &quot;display_name&quot;: &quot;&lt;IAE_INSTANCE_NAME&gt;&quot;,</span>
+<span class="sd">                &quot;instance_id&quot;: &quot;&lt;IAE_INSTANCE_ID&gt;&quot;,</span>
+<span class="sd">                &quot;volume&quot;: &quot;&lt;MY_VOLUME&gt;&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;credentials&quot;: {</span>
+<span class="sd">                &quot;username&quot;: &quot;admin&quot;,</span>
+<span class="sd">                &quot;apikey&quot;:&quot;&lt;API_KEY&quot;</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        from ibm_metrics_plugin.common.utils.constants import FairnessMetricType</span>
+<span class="sd">        metric_config = {</span>
+<span class="sd">            &quot;problem_type&quot;:&quot;binary&quot;,</span>
+<span class="sd">            &quot;label_column&quot; : &quot;Risk&quot;,</span>
+<span class="sd">            &quot;fairness&quot;: {</span>
+<span class="sd">                            &quot;metrics_configuration&quot;: {</span>
+<span class="sd">                                FairnessMetricType.SPD.value: {</span>
+<span class="sd">                                    &quot;features&quot;: [ [&quot;Sex&quot;],[&quot;Age&quot;] ]                                </span>
+<span class="sd">                                }    </span>
+<span class="sd">                            },</span>
+<span class="sd">                            &quot;protected_attributes&quot;: [</span>
+<span class="sd">                                {</span>
+<span class="sd">                                    &quot;feature&quot;: &quot;Sex&quot;,</span>
+<span class="sd">                                    &quot;reference_group&quot;: [&quot;male&quot;],</span>
+<span class="sd">                                    &quot;monitored_group&quot;: [&quot;female&quot;],</span>
+<span class="sd">                                    &quot;threshold&quot;: 0.95,</span>
+<span class="sd">                                },</span>
+<span class="sd">                                {</span>
+<span class="sd">                                    &quot;feature&quot;: &quot;Age&quot;,</span>
+<span class="sd">                                    &quot;reference_group&quot;: [[26, 55],[56,75]],</span>
+<span class="sd">                                    &quot;monitored_group&quot;: [[18, 25]],</span>
+<span class="sd">                                    &quot;threshold&quot;: 0.95,</span>
+<span class="sd">                                },</span>
+<span class="sd">                            ],</span>
+<span class="sd">                            &quot;favourable_label&quot;: [&quot;No Risk&quot;],</span>
+<span class="sd">                            &quot;unfavourable_label&quot;: [&quot;Risk&quot;],</span>
+<span class="sd">                            &quot;min_records&quot;: 100</span>
+<span class="sd">                        }</span>
+<span class="sd">        }</span>
+<span class="sd">        configuration = {</span>
+<span class="sd">            &quot;spark_settings&quot;: {</span>
+<span class="sd">                &quot;max_num_executors&quot;: 4,</span>
+<span class="sd">                &quot;executor_cores&quot;: 1,</span>
+<span class="sd">                &quot;executor_memory&quot;: &quot;1&quot;,</span>
+<span class="sd">                &quot;driver_cores&quot;: 1,</span>
+<span class="sd">                &quot;driver_memory&quot;: &quot;1&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;arguments&quot;: {</span>
+<span class="sd">                &quot;storage&quot;: {</span>
+<span class="sd">                    &quot;type&quot;: &quot;hive&quot;,</span>
+<span class="sd">                    &quot;connection&quot;: {</span>
+<span class="sd">                        &quot;location_type&quot;: &quot;metastore&quot;,</span>
+<span class="sd">                        &quot;metastore_url&quot;: &quot;&lt;METASTORE_URL&gt;&quot;</span>
+<span class="sd">                    }</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;tables&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;type&quot;: &quot;training&quot;,</span>
+<span class="sd">                        &quot;database&quot;: &quot;&lt;DB_NAME&gt;&quot;,</span>
+<span class="sd">                        &quot;schema&quot;: &quot;&quot;,</span>
+<span class="sd">                        &quot;table&quot;: &quot;&lt;TABLE_NAME&gt;&quot;</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]   </span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        configuration[&#39;arguments&#39;][&#39;metric_configuration&#39;] = metric_config</span>
+<span class="sd">        </span>
+<span class="sd">        A way you might use me is:</span>
+<span class="sd">        &gt;&gt;&gt; client.ai_metrics.compute_metrics_as_job(spark_credentials, configuration)</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>    
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computing metrics as spark Job&quot;</span><span class="p">)</span>
+        
+        <span class="n">engine_client_module</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">evaluation_job_module</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">engine_client_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;ibm_wos_utils.joblib.clients.engine_client&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EngineClient&quot;</span><span class="p">])</span>
+            <span class="n">evaluation_job_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;ibm_metrics_plugin.core.metrics_evaluation_job&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MetricsEvaluationJob&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find ibm-wos-utils library to compute metrics as Job. Please install it &quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Allow user to compute metrics only if he has standard plan on cloud</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__check_entitlement</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine_client</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">engine_client_module</span><span class="p">,</span> <span class="s2">&quot;EngineClient&quot;</span><span class="p">)(</span><span class="n">spark_credentials</span><span class="p">)</span>
+
+        <span class="n">metrics_evaluation_job</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">evaluation_job_module</span><span class="p">,</span> <span class="s2">&quot;MetricsEvaluationJob&quot;</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data_file_list&quot;</span><span class="p">)</span>
+
+        <span class="n">job_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine_client</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">run_job</span><span class="p">(</span><span class="n">job_name</span><span class="o">=</span><span class="s2">&quot;metrics_evaluation_job&quot;</span><span class="p">,</span><span class="n">job_class</span><span class="o">=</span><span class="n">metrics_evaluation_job</span><span class="p">,</span><span class="n">job_args</span><span class="o">=</span><span class="n">configuration</span><span class="p">,</span> <span class="n">data_file_list</span> <span class="o">=</span> <span class="n">files</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">background</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">job_response</span></div>
+    
+    <span class="k">def</span> <span class="nf">__get_job_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check the metrics evaluation job status&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">ibm_wos_utils.joblib.utils.notebook_utils</span> <span class="kn">import</span> <span class="n">JobStatus</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find ibm-wos-utils library to get Job status. Please install it.&quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">JobStatus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_client</span><span class="p">,</span> <span class="n">job_response</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AIMetrics.get_job_output"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics.get_job_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_job_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check the metrics evaluation job status and return the output on completion.&quot;&quot;&quot;</span>
+        <span class="n">job_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_job_status</span><span class="p">(</span><span class="n">job_response</span><span class="p">)</span>
+        <span class="n">job_status</span><span class="o">.</span><span class="n">print_status</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">job_status</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;FINISHED&quot;</span><span class="p">:</span>
+            <span class="n">job_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine_client</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">job_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_file_path&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/output.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">job_status</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;FAILED&quot;</span> <span class="ow">or</span> <span class="n">job_status</span><span class="o">.</span><span class="n">job_state</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;dead&quot;</span><span class="p">,</span> <span class="s2">&quot;killed&quot;</span><span class="p">,</span> <span class="s2">&quot;failed&quot;</span><span class="p">):</span>
+            <span class="n">job_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine_client</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">job_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_file_path&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/exception.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">job_output</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AIMetrics.fit_transformer"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics.fit_transformer">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transformer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">configuration</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Train a metric transformer.</span>
+<span class="sd">        :param SparkSession spark: Spark session object to be used for evaluation.</span>
+<span class="sd">        :param dict configuration: Configuration for fitting the transformer.</span>
+<span class="sd">        :param Union[DataFrame, pd.DataFrame] data_frame: Dataframe on which the transformer is to be trained upon.</span>
+<span class="sd">        :return: Instance of WOSTransformer</span>
+<span class="sd">        :rtype: WOSTransformer</span>
+<span class="sd">        </span>
+<span class="sd">        This is how the configuration parameter dict will look like</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        from ibm_metrics_plugin.common.utils.constants import FairnessMetricType</span>
+<span class="sd">        configuration = {}</span>
+<span class="sd">        configuration[&quot;configuration&quot;] = {</span>
+<span class="sd">            &quot;fairness&quot;: {</span>
+<span class="sd">                &quot;metrics_configuration&quot;: {</span>
+<span class="sd">                    FairnessMetricType.FST.value: {</span>
+<span class="sd">                        &quot;params&quot;: {</span>
+<span class="sd">                            &quot;epsilon&quot;: 0.01,</span>
+<span class="sd">                            &quot;criteria&quot;: &quot;MSP&quot;</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &quot;features&quot;: {&quot;probabilities&quot;: &lt;PROBABILITY_COLUMN_NAME&gt;, &quot;protected&quot;: &lt;PROTECTED_ATTRIBUTE_NAME&gt;}</span>
+<span class="sd">                    }</span>
+<span class="sd">                }     </span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        </span>
+<span class="sd">        A way you might use me is:</span>
+<span class="sd">        &gt;&gt;&gt; client.ai_metrics.fit_transformer(spark, configuration, data_frame)</span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_params</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span><span class="n">data_frame</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="n">configuration</span><span class="p">)</span>        
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metric_manager_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;ibm_metrics_plugin.core.metrics_manager&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MetricManager&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find metric-plugins library to compute metrics. Please install it &quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Allow user to compute metrics only if he has standard plan on cloud</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__check_entitlement</span><span class="p">()</span>
+            
+        <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_additional_configuration</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">is_cp4d</span><span class="p">)</span>
+            
+        <span class="n">metric_manager</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metric_manager_module</span><span class="p">,</span> <span class="s2">&quot;MetricManager&quot;</span><span class="p">)()</span>
+        <span class="k">return</span> <span class="n">metric_manager</span><span class="o">.</span><span class="n">fit_transformer</span><span class="p">(</span><span class="n">spark</span><span class="o">=</span><span class="n">spark</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="n">conf</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">=</span><span class="n">data_frame</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="AIMetrics.fit_transformer_as_job"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics.fit_transformer_as_job">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transformer_as_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spark_credentials</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Fit metric transformer as spark Job</span>
+<span class="sd">        </span>
+<span class="sd">        :param dict spark_credentials: Remote spark connection information.</span>
+<span class="sd">        :param dict configuration: Configuration for fitting the transformer. Configuration also include the information about where to read data from. Eg: Hive or DB2.</span>
+<span class="sd">        :return: Instance of WOSTransformer</span>
+<span class="sd">        :rtype: WOSTransformer</span>
+<span class="sd">        </span>
+<span class="sd">        This is how the parameters look like</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        spark_credentials = {</span>
+<span class="sd">            &quot;connection&quot;: {</span>
+<span class="sd">                &quot;endpoint&quot;: &quot;&lt;JOB_ENDPOINT&gt;&quot;,</span>
+<span class="sd">                &quot;location_type&quot;: &quot;cpd_iae&quot;,</span>
+<span class="sd">                &quot;display_name&quot;: &quot;&lt;IAE_INSTANCE_NAME&gt;&quot;,</span>
+<span class="sd">                &quot;instance_id&quot;: &quot;&lt;IAE_INSTANCE_ID&gt;&quot;,</span>
+<span class="sd">                &quot;volume&quot;: &quot;&lt;MY_VOLUME&gt;&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;credentials&quot;: {</span>
+<span class="sd">                &quot;username&quot;: &quot;admin&quot;,</span>
+<span class="sd">                &quot;apikey&quot;:&quot;&lt;API_KEY&quot;</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        from ibm_metrics_plugin.common.utils.constants import FairnessMetricType</span>
+<span class="sd">        metric_config = {</span>
+<span class="sd">            &quot;problem_type&quot;:&quot;binary&quot;,</span>
+<span class="sd">            &quot;label_column&quot; : &quot;Risk&quot;,</span>
+<span class="sd">            &quot;fairness&quot;: {</span>
+<span class="sd">                &quot;metrics_configuration&quot;: {</span>
+<span class="sd">                    FairnessMetricType.FST.value: {</span>
+<span class="sd">                        &quot;params&quot;: {</span>
+<span class="sd">                            &quot;epsilon&quot;: 0.01,</span>
+<span class="sd">                            &quot;criteria&quot;: &quot;MSP&quot;</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &quot;features&quot;: {&quot;probabilities&quot;: &lt;PROBABILITY_COLUMN_NAME&gt;, &quot;protected&quot;: &lt;PROTECTED_ATTRIBUTE_NAME&gt;}</span>
+<span class="sd">                    }</span>
+<span class="sd">                }     </span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        configuration = {</span>
+<span class="sd">            &quot;spark_settings&quot;: {</span>
+<span class="sd">                &quot;max_num_executors&quot;: 4,</span>
+<span class="sd">                &quot;executor_cores&quot;: 1,</span>
+<span class="sd">                &quot;executor_memory&quot;: &quot;1&quot;,</span>
+<span class="sd">                &quot;driver_cores&quot;: 1,</span>
+<span class="sd">                &quot;driver_memory&quot;: &quot;1&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;arguments&quot;: {</span>
+<span class="sd">                &quot;storage&quot;: {</span>
+<span class="sd">                    &quot;type&quot;: &quot;hive&quot;,</span>
+<span class="sd">                    &quot;connection&quot;: {</span>
+<span class="sd">                        &quot;location_type&quot;: &quot;metastore&quot;,</span>
+<span class="sd">                        &quot;metastore_url&quot;: &quot;&lt;METASTORE_URL&gt;&quot;</span>
+<span class="sd">                    }</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;tables&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;type&quot;: &quot;training&quot;,</span>
+<span class="sd">                        &quot;database&quot;: &quot;&lt;DB_NAME&gt;&quot;,</span>
+<span class="sd">                        &quot;schema&quot;: &quot;&quot;,</span>
+<span class="sd">                        &quot;table&quot;: &quot;&lt;TABLE_NAME&gt;&quot;</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]   </span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        configuration[&#39;arguments&#39;][&#39;metric_configuration&#39;] = metric_config</span>
+<span class="sd">        </span>
+<span class="sd">        A way you might use me is:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; client.ai_metrics.fit_transformer_as_job(spark_credentials, configuration)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+                            
+        <span class="c1"># This requires dependency on WOS utils</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fit transformer as spark Job&quot;</span><span class="p">)</span>
+
+        <span class="n">engine_client_module</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">evaluation_job_module</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">engine_client_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;ibm_wos_utils.joblib.clients.engine_client&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EngineClient&quot;</span><span class="p">])</span>
+            <span class="n">evaluation_job_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;ibm_metrics_plugin.core.fit_transformer_job&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;FitTransformerJob&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find ibm-wos-utils library to compute metrics as Job. Please install it &quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Allow user to compute metrics only if he has standard plan on cloud</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__check_entitlement</span><span class="p">()</span>
+        
+        <span class="n">fairness_metrics_conf</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span><span class="s2">&quot;arguments.metric_configuration.fairness.metrics_configuration&quot;</span><span class="p">)</span>
+        
+        <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_additional_configuration_for_job</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">is_cp4d</span><span class="p">)</span>
+
+        <span class="n">engine_client</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">engine_client_module</span><span class="p">,</span> <span class="s2">&quot;EngineClient&quot;</span><span class="p">)(</span><span class="n">spark_credentials</span><span class="p">)</span>
+        <span class="n">metrics_evaluation_job</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">evaluation_job_module</span><span class="p">,</span> <span class="s2">&quot;FitTransformerJob&quot;</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data_file_list&quot;</span><span class="p">)</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">timeout</span> <span class="o">=</span> <span class="mi">600</span>
+            
+        <span class="n">job_response</span> <span class="o">=</span> <span class="n">engine_client</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">run_job</span><span class="p">(</span><span class="n">job_name</span><span class="o">=</span><span class="s2">&quot;fit_transformer_job&quot;</span><span class="p">,</span> <span class="n">job_class</span><span class="o">=</span><span class="n">metrics_evaluation_job</span><span class="p">,</span>
+                                     <span class="n">job_args</span><span class="o">=</span><span class="n">configuration</span><span class="p">,</span> <span class="n">data_file_list</span> <span class="o">=</span> <span class="n">files</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+
+
+        <span class="n">transformer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">job_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fit transformer job complete with state </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;finished&quot;</span><span class="p">,</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">metric_type_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;ibm_metrics_plugin.common.utils.constants&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;FairnessMetricType&quot;</span><span class="p">])</span>                
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find ibm-metrics-plugin library to compute metrics. Please install it &quot;</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">metric_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metric_type_module</span><span class="p">,</span> <span class="s2">&quot;FairnessMetricType&quot;</span><span class="p">)</span>
+            <span class="n">fairness_tpsd_type</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">fairness_metric_type</span> <span class="ow">in</span> <span class="n">fairness_metrics_conf</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fairness_metric_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">metric_type</span><span class="o">.</span><span class="n">TPSD</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">metric_type</span><span class="o">.</span><span class="n">TP</span><span class="o">.</span><span class="n">value</span><span class="p">]:</span>
+                    <span class="n">fairness_tpsd_type</span> <span class="o">=</span> <span class="n">metric_type</span>                    
+            <span class="k">if</span> <span class="n">fairness_tpsd_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">pickle</span>
+                <span class="n">transformer_pickle</span> <span class="o">=</span> <span class="n">engine_client</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">download_directory</span><span class="p">(</span><span class="n">job_response</span><span class="p">[</span><span class="s2">&quot;output_file_path&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/transformer.pkl&quot;</span><span class="p">)</span>
+                <span class="n">transformer</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">transformer_pickle</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Job failed with response: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job_response</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">transformer</span></div>
+
+<div class="viewcode-block" id="AIMetrics.transform_result"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics.transform_result">[docs]</a>    <span class="k">def</span> <span class="nf">transform_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics_result</span><span class="p">,</span> <span class="n">metric_group_type</span><span class="p">,</span> <span class="n">metric_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transform the json metric result to the required object.</span>
+<span class="sd">        For SHAP metric, the result is transformed to SHAP explanation objects which can then be used to plot the explanations.</span>
+<span class="sd">        An exception is thrown when invoked for metric which do not support transformation of result.&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">ibm_metrics_plugin.common.utils.constants</span> <span class="kn">import</span> <span class="n">MetricGroupType</span><span class="p">,</span> <span class="n">ExplainabilityMetricType</span>
+            <span class="kn">from</span> <span class="nn">ibm_metrics_plugin.metrics.explainability.explainers.shap.shap_explanation</span> <span class="kn">import</span> <span class="n">ShapExplanation</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find metric-plugins library. Please install it &quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_value</span><span class="p">(</span><span class="n">metrics_result</span><span class="p">,</span> <span class="s2">&quot;metrics_result&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metric_group_type</span> <span class="o">==</span> <span class="n">MetricGroupType</span><span class="o">.</span><span class="n">EXPLAINABILITY</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="n">metric_type</span> <span class="o">==</span> <span class="n">ExplainabilityMetricType</span><span class="o">.</span><span class="n">SHAP</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">explain_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_value</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">metric_group_type</span><span class="p">)</span>
+            <span class="n">shap_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_value</span><span class="p">(</span><span class="n">explain_results</span><span class="p">,</span> <span class="n">metric_type</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ShapExplanation</span><span class="o">.</span><span class="n">get_shap_explanation</span><span class="p">(</span><span class="n">shap_result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;There is no transformation supported for the given metric group type and metric type.&quot;</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="AIMetrics.show_supported_fairness_metrics"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics.show_supported_fairness_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">show_supported_fairness_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__show_supported_metrics</span><span class="p">(</span><span class="n">show_fairness</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span></div>
+            
+<div class="viewcode-block" id="AIMetrics.show_supported_explainers"><a class="viewcode-back" href="../../../../index.html#ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics.show_supported_explainers">[docs]</a>    <span class="k">def</span> <span class="nf">show_supported_explainers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__show_supported_metrics</span><span class="p">(</span><span class="n">show_explainers</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span></div>
+            
+    <span class="k">def</span> <span class="nf">__show_supported_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">show_fairness</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">show_explainers</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metric_type_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;ibm_metrics_plugin.common.utils.constants&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;FairnessMetricType,ExplainabilityMetricType&quot;</span><span class="p">])</span>                
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find ibm-metrics-plugin library to list supported metrics. Please install the library &quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_fairness</span><span class="p">:</span>
+            <span class="n">metric_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metric_type_module</span><span class="p">,</span> <span class="s2">&quot;FairnessMetricType&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# from ibm_metrics_plugin.common.utils.constants import FairnessMetricType&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Following fairness metrics are supported&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metric_type</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">show_explainers</span><span class="p">:</span>
+            <span class="n">metric_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">metric_type_module</span><span class="p">,</span> <span class="s2">&quot;ExplainabilityMetricType&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# from ibm_metrics_plugin.common.utils.constants import ExplainabilityMetricType&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Following Explainers are supported&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metric_type</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>                                 
+
+    <span class="k">def</span> <span class="nf">__validate_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spark</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">metric_aggregator</span><span class="p">,</span> <span class="n">configuration</span><span class="p">):</span>
+        <span class="n">data_frame_instance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">spark_session_instance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">accumulator_instance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">spark_session_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;pyspark.sql.session&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SparkSession&quot;</span><span class="p">,</span><span class="s2">&quot;DataFrame&quot;</span><span class="p">])</span>
+            <span class="n">accumulators_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;pyspark.accumulators&quot;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Accumulator&quot;</span><span class="p">])</span>
+            
+            <span class="n">spark_session_instance</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">spark_session_module</span><span class="p">,</span> <span class="s2">&quot;SparkSession&quot;</span><span class="p">)</span>
+            <span class="n">data_frame_instance</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">spark_session_module</span><span class="p">,</span> <span class="s2">&quot;DataFrame&quot;</span><span class="p">)</span>
+            <span class="n">accumulator_instance</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">accumulators_module</span><span class="p">,</span> <span class="s2">&quot;Accumulator&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find spark library. Please install it &quot;</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="s2">&quot;configuration&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span> <span class="s2">&quot;spark&quot;</span><span class="p">,</span> <span class="n">spark_session_instance</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="s2">&quot;data_frame&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">data_frame_instance</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">metric_aggregator</span><span class="p">,</span> <span class="s2">&quot;metric_aggregator&quot;</span><span class="p">,</span> <span class="n">accumulator_instance</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        
+        
+    <span class="k">def</span> <span class="nf">__set_additional_configuration_for_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span><span class="n">is_cp4d</span><span class="p">):</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;arguments&quot;</span><span class="p">][</span><span class="s2">&quot;metric_configuration&quot;</span><span class="p">][</span><span class="s2">&quot;is_cp4d&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_cp4d</span>
+        <span class="k">return</span> <span class="n">conf</span>
+    
+    <span class="k">def</span> <span class="nf">__set_additional_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span><span class="n">is_cp4d</span><span class="p">):</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;configuration&quot;</span><span class="p">][</span><span class="s2">&quot;is_cp4d&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_cp4d</span>
+        <span class="k">return</span> <span class="n">conf</span> 
+    
+    <span class="k">def</span> <span class="nf">__check_entitlement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#Allow user to compute metrics only if he has standard plan on cloud</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">is_cp4d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">is_entitled_on_cloud</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">service_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ai_client</span><span class="o">.</span><span class="n">service_instance_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unable to find </span><span class="si">{0}</span><span class="s2"> attribute in the result.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on May 29, 2023.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,544 @@
+Welcome to IBM Watson OpenScale Python SDK's |version| documentation!
+--------------------
+
+Python client library to quickly get started with IBM Watson OpenScale.
+``ibm_watson_openscale`` is a python library that allows to work with Watson OpenScale service on `IBM Cloud <https://console.bluemix.net/catalog/services/>`_.
+Test and deploy your models as APIs for application development, share with colleagues using this python library.
+
+.. contents::
+
+Installation
+------------
+
+The package is available on pypi.
+To install, use ``pip``:
+
+.. code-block:: bash
+
+   $pip install -U ibm-watson-openscale
+
+Requirements
+----------------
+Watson OpenScale service instance, you can create instance using this `link <https://www.ibm.com/cloud/watson-openscale/>`_. Only Python 3.5 or newer is supported.
+``ibm-cloud-sdk-core >= 1.1`` is required to be able to authenticate to the service.
+
+Breaking changes log
+---------------------
+- Watson Machine Learning instances in regions other than US-South (Dallas) are not officially supported.
+- Only one deployment per subscription is supported.
+
+Supported engines
+---------------------
+- Watson Machine Learning
+- Custom Machine Learning (following this `specification <https://aiopenscale-custom-deployement-spec.mybluemix.net/>`_)
+- Microsoft Azure Machine Learning Studio (deployments of type new)
+- Amazon SageMaker Machine Learning
+- SPSS Collaboration and Deployment Services
+
+
+API
+----------------
+To start working with the client library you need Watson OpenScale service credentials.
+Credentials can be found under *Credentials* tab of your service instance (IBM Cloud).
+An OpenScale Python SDK v2 uses an ``ibm-cloud-sdk-core`` package to authenticate with the service.
+For more detailed description of the authentication, please visit:
+`IBM Cloud SDK Core <https://github.com/IBM/python-sdk-core/blob/master/Authentication.md>`_
+
+Below is presented the programmatically version of client initialization. All necessary credentials must be provided
+during ``APIClient`` object creation.
+Only ``authenticator`` parameter is required, but have in mind that passing only ``authenticator`` parameter,
+the default options will be used (``service_url`` = "https://api.aiopenscale.cloud.ibm.com"
+and ``service_instance_id`` will be retrieved automatically)
+
+.. code-block:: python
+
+    from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+    from ibm_watson_openscale import APIClient
+
+    service_credentials = {
+                      "apikey": "*****",
+                      "url": "https://api.aiopenscale.cloud.ibm.com"
+                   }
+
+    authenticator = IAMAuthenticator(
+            apikey=service_credentials['apikey']
+        )
+
+    # default value of service_url = "https://api.aiopenscale.cloud.ibm.com",
+    # service_instance_id retrieved automatically
+    client = APIClient(
+            authenticator=authenticator
+        )
+
+    # or
+
+    # service_instance_id retrieved automatically
+    client = APIClient(
+        service_url=service_credentials['url'],
+        authenticator=authenticator
+    )
+
+    # or
+
+    client = APIClient(
+        service_url=service_credentials['url'],
+        service_instance_id="230a8e9f-2453-4c2d-a560-2a75399210bf"
+        authenticator=authenticator
+    )
+    
+In case of CP4D environments, ``CloudPakForDataAuthenticator`` class should be used (instead of ``IAMAuthenticator``)
+
+Note: If you have multiple instances of OpenScale running on CP4D env then you can use following code to get list of service_instance_ids for which you have access to
+
+.. code-block:: python
+    
+    import urllib3
+    urllib3.disable_warnings()
+    from ibm_watson_openscale.utils.client_utils import get_my_instance_ids 
+    
+    my_instances = get_my_instance_ids(url, <username>, password=<password>,apikey = <apikey>): # Pass either password or apikey but not both
+    print(my_instances)
+
+.. code-block:: python
+
+    from ibm_cloud_sdk_core.authenticators import CloudPakForDataAuthenticator
+    from ibm_watson_openscale import APIClient
+
+    service_credentials = {
+                    "url": "******",
+                    "username": "*****",
+                    "password": "*****"
+                    }
+
+    authenticator = CloudPakForDataAuthenticator(
+            url=service_credentials['url'],
+            username=service_credentials['username'],
+            password=service_credentials['password'],
+            disable_ssl_verification=True
+        )
+
+    # default value of service_url = "https://api.aiopenscale.cloud.ibm.com",
+    # service_instance_id retrieved automatically
+    client = APIClient(
+            authenticator=authenticator
+        )
+
+    # or
+
+    # service_instance_id retrieved automatically
+    client = APIClient(
+        service_url=service_credentials['url'],
+        authenticator=authenticator
+    )
+
+    # or
+
+    client = APIClient(
+        service_url=service_credentials['url'],
+        service_instance_id="230a8e9f-2453-4c2d-a560-2a75399210bf"
+        authenticator=authenticator
+    )
+    
+    # or
+    
+    #
+    # Use this if you have CP4D 4.0.x and iam integration is enabled.
+    # bedrock_url is nothing but the foundational services (common-services-route ) url. User needs to get this url from CP4D admin.
+    client = APIClient(
+        service_url=service_credentials['url'],
+        service_instance_id="230a8e9f-2453-4c2d-a560-2a75399210bf"
+        authenticator=authenticator,
+        bedrock_url = <COMMON_SERVICES_URL>
+    )
+
+You could initialize the client from environmental variables directly or from configuration file.
+The service_name must be identical in the configuration file and passed to the ``new_instance()``
+class method of the client
+
+File with configuration:
+
+.. code-block:: python
+
+    # bm-credentials.env
+    OpenScale_URL=https://api.aiopenscale.cloud.ibm.com
+    OpenScale_AUTH_TYPE=iam
+    OpenScale_APIKEY=ncn92u92benfi2nec0292ebicm02
+    OpenScale_AUTH_URL=https://iam.cloud.ibm.com/identity/token
+
+How to use ``new_instance()`` class method:
+
+.. code-block:: python
+
+    from ibm_watson_openscale import APIClient
+    import os
+
+    os.environ["IBM_CREDENTIALS_FILE"] = "path_to_credential_file/ibm-credentials.env"
+    ai_client = APIClient.new_instance(service_name='OpenScale')
+
+
+Basic SDK's elements
+------------------------
+
+APIClient
+====================================
+
+.. automodule:: ibm_watson_openscale.client
+   :members:
+   :exclude-members: configure_service
+   :undoc-members:
+   :show-inheritance:
+
+APIClient.data_marts
+====================================
+
+.. autoclass:: ibm_watson_openscale.data_marts.DataMarts
+   :members:
+   :exclude-members:
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:
+
+APIClient.service_providers
+====================================
+
+.. autoclass:: ibm_watson_openscale.service_providers.ServiceProviders
+   :members:
+   :exclude-members:
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:
+
+APIClient.subscriptions
+====================================
+
+.. autoclass:: ibm_watson_openscale.subscriptions.Subscriptions
+   :members:
+   :exclude-members:
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:
+
+APIClient.data_sets
+====================================
+
+.. autoclass:: ibm_watson_openscale.data_sets.DataSets
+   :members:
+   :exclude-members: get_request_status
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:
+
+APIClient.monitor_instances
+====================================
+
+.. autoclass:: ibm_watson_openscale.monitor_instances.MonitorInstances
+   :members:
+   :exclude-members: get_instance, add, update_instance, delete_instance, list_instances, add_instance, run_instance
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:
+
+APIClient.monitor_definitions
+====================================
+
+.. autoclass:: ibm_watson_openscale.monitor_definitions.MonitorDefinitions
+   :members:
+   :exclude-members: list_instances, add_instance, get_instance, update_instance, delete_instance, run_instance, list_runs, get_run_instance, update_run_instance, get_run_logs_instance, publish_instance_measurements, list_instance_measurements, get_instance_measurement, list_instance_metrics, list_measurements, get_run_details, list_metrics, store_measurements, update_run
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:
+   
+APIClient.ai_metrics
+====================================
+
+.. autoclass:: ibm_watson_openscale.supporting_classes.metrics.ai_metrics.AIMetrics
+   :members:
+   :exclude-members:
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:   
+
+APIClient.integrated_systems
+====================================
+
+.. autoclass:: ibm_watson_openscale.integrated_systems.IntegratedSystems
+   :members:
+   :exclude-members:
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:  
+
+Helper Classes
+------------------------
+
+MetricThreshold
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.MetricThreshold
+   :members:
+   :exclude-members: to_dict, from_dict, TypeEnum
+   :undoc-members:
+
+Target
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.Target
+   :members:
+   :exclude-members: to_dict, from_dict, TargetTypeEnum
+   :undoc-members:
+
+MonitorInstanceParameters
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.MonitorInstanceParameters
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+DatabaseConfiguration
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.DatabaseConfiguration
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+AzureCredentials
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.AzureCredentials
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+CustomCredentials
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.CustomCredentials
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+SageMakerCredentials
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.SageMakerCredentials
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+SPSSCredentials
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.SPSSCredentials
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+WMLCredentialsCP4D
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.WMLCredentialsCP4D
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+WMLCredentialsCloud
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.WMLCredentialsCloud
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+Asset
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.Asset
+   :members:
+   :exclude-members: to_dict, from_dict, AssetTypeEnum, ProblemTypeEnum, InputDataTypeEnum
+   :undoc-members:
+
+AssetDeploymentRequest
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.AssetDeploymentRequest
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+AssetPropertiesRequest
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.AssetPropertiesRequest
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+PayloadRecord
+====================================
+
+.. autoclass:: ibm_watson_openscale.supporting_classes.payload_record.PayloadRecord
+   :members:
+   :exclude-members: to_json
+   :undoc-members:
+
+MonitorMeasurementMetrics
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.MonitorMeasurementMetrics
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+PrimaryStorageCredentialsLong
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.PrimaryStorageCredentialsLong
+   :members:
+   :exclude-members: to_dict, from_dict
+   :undoc-members:
+
+JsonPatchOperation
+====================================
+
+.. autoclass:: ibm_watson_openscale.base_classes.watson_open_scale_v2.JsonPatchOperation
+   :members:
+   :exclude-members: to_dict, from_dict, OpEnum
+   :undoc-members:
+
+Enums
+------------------------
+
+.. automodule:: ibm_watson_openscale.supporting_classes.enums
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   
+Sample Monitor Instance Payloads
+------------------------
+Quality
+====================================
+    .. code-block:: python
+
+            target = Target(
+		        target_type=TargetTypes.SUBSCRIPTION,
+		        target_id=<SUBSCRIPTION_ID>
+		    )
+            parameters =  {
+		        "min_feedback_data_size": 200
+		    }
+	        thresholds =  [{
+		        "metric_id": "area_under_roc",
+		        "type": "lower_limit",
+		        "value": 0.75
+		    }]
+            ai_client.monitor_instances.create(
+            data_mart_id=<DATAMART_ID>,
+            background_mode=False,
+            monitor_definition_id=ai_client.monitor_definitions.MONITORS.QUALITY.ID,
+            target=target,
+            parameters=parameters,
+            thresholds=thresholds
+        ) 
+
+Drift
+====================================
+    .. code-block:: python
+    
+		target = Target(
+	        target_type=TargetTypes.SUBSCRIPTION,
+	        target_id=<SUBSCRIPTION_ID>
+	        )
+		parameters = {
+		    "min_samples": 1000,
+		    "drift_threshold": 0.1,
+		    "train_drift_model": True,
+		    "enable_data_drift": True,
+		    "enable_model_drift": True,
+		    "model_name": "<archive_name_to_be_used>"
+	    }
+	    ai_client.monitor_instances.create(
+	        data_mart_id=<DATAMART_ID>,
+	        background_mode=False,
+	        monitor_definition_id=ai_client.monitor_definitions.MONITORS.DRIFT.ID,
+	        target=target,
+	        parameters=parameters,
+	        thresholds=thresholds
+	    )
+
+Explanation
+====================================
+    .. code-block:: python
+    
+        target = Target(
+            target_type=TargetTypes.SUBSCRIPTION,
+            target_id=<SUBSCRIPTION_ID>
+            )
+        parameters = {
+            "enabled":True
+        }
+        ai_client.monitor_instances.create(
+            data_mart_id=<DATAMART_ID>,
+            background_mode=False,
+            monitor_definition_id=ai_client.monitor_definitions.MONITORS.EXPLAINABILITY.ID,
+            target=target,
+            parameters=parameters
+        )  
+
+Fairness 
+====================================
+    .. code-block:: python
+     
+		parameters =  {
+	        "class_label": "predictedLabel",
+	        "favourable_class": [
+	            "No Risk"
+	        ],
+	        "features": [{
+	            "feature": "Age",
+	            "majority": [
+	                [
+	                    19,
+	                    43
+	                ]
+	            ],
+	            "minority": [
+	                [
+	                    44,
+	                    67
+	                ]
+	            ]
+	        }],
+	        "unfavourable_class": [
+	            "Risk"
+	        ],
+	        "min_records": 100
+	    }
+	    
+	    thresholds =  [{
+	        "metric_id": "fairness_value",
+	        "specific_values": [{
+	            "applies_to": [{
+	                "key": "feature",
+	                "type": "tag",
+	                "value": "Age"
+	            }],
+	            "value": 90.0
+	        }],
+	        "type": "lower_limit",
+	        "value": 90.0
+	    }]
+	    
+	    target = Target(
+	        target_type=TargetTypes.SUBSCRIPTION,
+	        target_id=<SUBSCRIPTION_ID>
+	        )
+	    ai_client.monitor_instances.create(
+	        data_mart_id=<DATAMART_ID>,
+	        background_mode=False,
+	        monitor_definition_id=ai_client.monitor_definitions.MONITORS.FAIRNESS.ID,
+	        target=target,
+	        parameters=parameters,
+	        thresholds=thresholds )
+

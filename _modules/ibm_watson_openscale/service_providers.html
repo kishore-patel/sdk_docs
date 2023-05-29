@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ibm_watson_openscale.service_providers &mdash; IBM Watson OpenScale 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            IBM Watson OpenScale
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">IBM Watson OpenScale</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ibm_watson_openscale.service_providers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ibm_watson_openscale.service_providers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+
+<span class="c1"># Copyright 2020 IBM All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#      http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">ibm_cloud_sdk_core</span> <span class="kn">import</span> <span class="n">BaseService</span>
+
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.tables</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.watson_open_scale_v2</span> <span class="kn">import</span> \
+    <span class="n">AzureCredentials</span><span class="p">,</span> <span class="n">CustomCredentials</span><span class="p">,</span> <span class="n">SageMakerCredentials</span><span class="p">,</span> \
+    <span class="n">SPSSCredentials</span><span class="p">,</span> <span class="n">WMLCredentialsCP4D</span><span class="p">,</span> <span class="n">WMLCredentialsCloud</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.utils.client_errors</span> <span class="kn">import</span> <span class="n">InvalidCredentialsProvided</span><span class="p">,</span><span class="n">IncorrectParameter</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.watson_open_scale_v2</span> <span class="kn">import</span> <span class="n">ServiceProviders</span> <span class="k">as</span> <span class="n">BaseServiceProviders</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.watson_open_scale_v2</span> <span class="kn">import</span> <span class="n">get_sdk_headers</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+    <span class="kn">from</span> <span class="nn">.client</span> <span class="kn">import</span> <span class="n">WatsonOpenScaleV2Adapter</span>
+
+<span class="n">_DEFAULT_LIST_LENGTH</span> <span class="o">=</span> <span class="mi">50</span>
+
+
+<span class="c1"># TODO: Add parameters validation in every method</span>
+<div class="viewcode-block" id="ServiceProviders"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.service_providers.ServiceProviders">[docs]</a><span class="k">class</span> <span class="nc">ServiceProviders</span><span class="p">(</span><span class="n">BaseServiceProviders</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages Service Provider instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ai_client</span><span class="p">:</span> <span class="s1">&#39;WatsonOpenScaleV2Adapter&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">ai_client</span><span class="p">,</span> <span class="s1">&#39;ai_client&#39;</span><span class="p">,</span> <span class="n">BaseService</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ai_client</span> <span class="o">=</span> <span class="n">ai_client</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">watson_open_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ai_client</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ServiceProviders.show"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.service_providers.ServiceProviders.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">show_deleted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">service_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">instance_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">operational_space_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">deployment_space_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show service providers. By default 10 records will be shown.</span>
+
+<span class="sd">        :param limit: maximal number of fetched rows. By default set to 10. (optional)</span>
+<span class="sd">        :type limit: int</span>
+<span class="sd">        :param bool show_deleted: (optional) show also resources pending delete.</span>
+<span class="sd">        :param str service_type: (optional) Type of service.</span>
+<span class="sd">        :param str instance_id: (optional) comma-separeted list of IDs.</span>
+<span class="sd">        :param str operational_space_id: (optional) comma-separeted list of IDs.</span>
+<span class="sd">        :param str deployment_space_id: (optional) comma-separeted list of IDs.</span>
+<span class="sd">        :param dict headers: A `dict` containing the request headers</span>
+<span class="sd">        </span>
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; client.service_providers.show()</span>
+<span class="sd">        &gt;&gt;&gt; client.service_providers.show(limit=20)</span>
+<span class="sd">        &gt;&gt;&gt; client.service_providers.show(limit=None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;limit&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+            <span class="n">show_deleted</span><span class="o">=</span><span class="n">show_deleted</span><span class="p">,</span>
+            <span class="n">service_type</span><span class="o">=</span><span class="n">service_type</span><span class="p">,</span>
+            <span class="n">instance_id</span><span class="o">=</span><span class="n">instance_id</span><span class="p">,</span>
+            <span class="n">operational_space_id</span><span class="o">=</span><span class="n">operational_space_id</span><span class="p">,</span>
+            <span class="n">deployment_space_id</span><span class="o">=</span><span class="n">deployment_space_id</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">records</span> <span class="o">=</span> <span class="p">[[</span><span class="n">service_provider</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">instance_id</span><span class="p">,</span>
+                    <span class="n">service_provider</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                    <span class="n">service_provider</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">service_provider</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">service_type</span><span class="p">,</span>
+                    <span class="n">service_provider</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">created_at</span><span class="p">,</span>
+                    <span class="n">service_provider</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">id</span>
+                    <span class="p">]</span> <span class="k">for</span> <span class="n">service_provider</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">service_providers</span><span class="p">]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;instance_id&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;service_type&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="n">Table</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">records</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+            <span class="n">default_limit</span><span class="o">=</span><span class="n">_DEFAULT_LIST_LENGTH</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Service Providers&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ServiceProviders.add"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.service_providers.ServiceProviders.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">service_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">credentials</span><span class="p">:</span> <span class="s1">&#39;MLCredentials&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">request_headers</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">operational_space_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">deployment_space_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">group_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">user_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">background_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DetailedResponse&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add service provider.</span>
+
+<span class="sd">        Assosiate external Machine Learning service instance with the OpenScale DataMart.</span>
+
+<span class="sd">        :param str name: Name of the ML service instance.</span>
+<span class="sd">        :param str service_type: (optional) machine learning service type</span>
+<span class="sd">               (azure_machine_learning_studio is a preferred alias for</span>
+<span class="sd">               azure_machine_learning and should be used in new service bindings).</span>
+<span class="sd">        :param str description: (optional)</span>
+<span class="sd">        :param MLCredentials credentials: (optional)</span>
+<span class="sd">        :param object request_headers: (optional) map header name to header value.</span>
+<span class="sd">        :param str operational_space_id: (optional) Reference to Operational Space.</span>
+<span class="sd">                                         Allowed values are &#39;production&#39; and &#39;pre_production&#39;</span>
+<span class="sd">        :param str deployment_space_id: (optional) Reference to V2 Space ID</span>
+<span class="sd">        :param List[str] group_ids: (optional) Access control list of group id of</span>
+<span class="sd">               Cloud Pak for Data (Only available for OpenScale on Cloud Pak for Data &gt;=</span>
+<span class="sd">               4.0.6 with ENABLE_GROUP_AUTH being true).</span>
+<span class="sd">        :param List[str] user_ids: (optional) Access control list of user id of</span>
+<span class="sd">               Cloud Pak for Data (Only available for OpenScale on Cloud Pak for Data &gt;=</span>
+<span class="sd">               4.0.6 with ENABLE_GROUP_AUTH being true).</span>
+<span class="sd">        :param background_mode: if set to True, run will be in asynchronous mode, if set to False</span>
+<span class="sd">                it will wait for result (optional)</span>
+<span class="sd">        :type background_mode: bool</span>
+<span class="sd">        :return: A `DetailedResponse` containing the result, headers and HTTP status code.</span>
+<span class="sd">        :rtype: DetailedResponse with `ServiceProviderResponse` result</span>
+
+<span class="sd">        A way you may use me when WML is located on same cluster</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale import *</span>
+<span class="sd">        &gt;&gt;&gt; added_service_provider_info = client.service_providers.add(</span>
+<span class="sd">                background_mode=False,</span>
+<span class="sd">                name=&quot;WML instance&quot;,</span>
+<span class="sd">                service_type=ServiceTypes.WATSON_MACHINE_LEARNING,</span>
+<span class="sd">                deployment_space_id = &lt;SPACE_ID&gt;,</span>
+<span class="sd">                operational_space_id = &quot;production&quot;</span>
+<span class="sd">                credentials=WMLCredentialsCloud(</span>
+<span class="sd">                    url=&#39;&lt;URL&gt;&#39;,</span>
+<span class="sd">                    username=&#39;&lt;USERNAME&gt;&#39;,</span>
+<span class="sd">                    password=&#39;&lt;PASSWORD&gt;&#39;</span>
+<span class="sd">                )</span>
+<span class="sd">             )</span>
+<span class="sd">        </span>
+<span class="sd">        A way you may use me when WML is located on different CP4D cluster (Available only on CP4D 4.0 or higher)</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale import *</span>
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale.supporting_classes.enums import *</span>
+<span class="sd">        &gt;&gt;&gt; added_service_provider_info = client.service_providers.add(</span>
+<span class="sd">                background_mode=False,</span>
+<span class="sd">                name=&quot;WML instance&quot;,</span>
+<span class="sd">                service_type=ServiceTypes.WATSON_MACHINE_LEARNING,</span>
+<span class="sd">                deployment_space_id = &lt;SPACE_ID&gt;,</span>
+<span class="sd">                operational_space_id = &quot;production&quot;</span>
+<span class="sd">                credentials=WMLCredentialsCloud(</span>
+<span class="sd">                    url = &#39;&lt;URL&gt;&#39;,</span>
+<span class="sd">                    username=&#39;&lt;USERNAME&gt;,</span>
+<span class="sd">                    apikey=&#39;APIKEY&gt;&#39;,</span>
+<span class="sd">                    wml_location = CP4DWMLLocation.CPD_REMOTE</span>
+<span class="sd">                )</span>
+<span class="sd">             )</span>
+<span class="sd">             </span>
+<span class="sd">        A way you may use me when WML is located on IBM Cloud</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale import *</span>
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale.supporting_classes.enums import *</span>
+<span class="sd">        &gt;&gt;&gt; added_service_provider_info = client.service_providers.add(</span>
+<span class="sd">                background_mode=False,</span>
+<span class="sd">                name=&quot;WML instance&quot;,</span>
+<span class="sd">                service_type=ServiceTypes.WATSON_MACHINE_LEARNING,</span>
+<span class="sd">                deployment_space_id = &lt;SPACE_ID&gt;,</span>
+<span class="sd">                operational_space_id = &quot;production&quot;</span>
+<span class="sd">                credentials=WMLCredentialsCloud(</span>
+<span class="sd">                    url = &#39;&lt;URL&gt;&#39;,</span>
+<span class="sd">                    apikey=&#39;APIKEY&gt;&#39;,</span>
+<span class="sd">                    wml_location = CP4DWMLLocation.CLOUD_REMOTE</span>
+<span class="sd">                )</span>
+<span class="sd">             )     </span>
+<span class="sd">                  </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">validate_type</span><span class="p">(</span><span class="n">service_type</span><span class="p">,</span> <span class="s1">&#39;service_type&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">WMLCredentialsCP4D</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">WMLCredentialsCloud</span><span class="p">):</span>
+            <span class="n">service_type</span> <span class="o">=</span> <span class="n">ServiceTypes</span><span class="o">.</span><span class="n">WATSON_MACHINE_LEARNING</span>
+            <span class="c1"># Validating the credentials</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">WMLCredentialsCloud</span><span class="p">):</span>
+                <span class="c1"># Checking if either API key of a token is present</span>
+                <span class="k">if</span> <span class="n">credentials</span><span class="o">.</span><span class="n">apikey</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">credentials</span><span class="o">.</span><span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Both are not given</span>
+                    <span class="k">raise</span> <span class="n">InvalidCredentialsProvided</span><span class="p">(</span><span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Either API key or a token must be provided.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">AzureCredentials</span><span class="p">):</span>
+            <span class="n">service_type</span> <span class="o">=</span> <span class="n">ServiceTypes</span><span class="o">.</span><span class="n">AZURE_MACHINE_LEARNING</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">CustomCredentials</span><span class="p">):</span>
+            <span class="n">service_type</span> <span class="o">=</span> <span class="n">ServiceTypes</span><span class="o">.</span><span class="n">CUSTOM_MACHINE_LEARNING</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">SageMakerCredentials</span><span class="p">):</span>
+            <span class="n">service_type</span> <span class="o">=</span> <span class="n">ServiceTypes</span><span class="o">.</span><span class="n">AMAZON_SAGEMAKER</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">SPSSCredentials</span><span class="p">):</span>
+            <span class="n">service_type</span> <span class="o">=</span> <span class="n">ServiceTypes</span><span class="o">.</span><span class="n">SPSS_COLLABORATION_AND_DEPLOYMENT_SERVICES</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">validate_type</span><span class="p">(</span><span class="n">service_type</span><span class="p">,</span> <span class="s1">&#39;service_type&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ai_client</span><span class="o">.</span><span class="n">is_cp4d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">group_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">user_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">IncorrectParameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="o">=</span> <span class="s2">&quot;group_ids/user_ids&quot;</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Parameters group_ids/user_ids are only available for OpenScale on Cloud Pak for Data &gt;=4.0.6 &quot;</span><span class="p">)</span>
+                         
+        <span class="n">response</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">service_type</span><span class="o">=</span><span class="n">service_type</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                               <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">,</span> <span class="n">request_headers</span><span class="o">=</span><span class="n">request_headers</span><span class="p">,</span>
+                               <span class="n">operational_space_id</span><span class="o">=</span><span class="n">operational_space_id</span><span class="p">,</span><span class="n">deployment_space_id</span> <span class="o">=</span> <span class="n">deployment_space_id</span><span class="p">,</span>
+                               <span class="n">group_ids</span> <span class="o">=</span> <span class="n">group_ids</span><span class="p">,</span><span class="n">user_ids</span> <span class="o">=</span> <span class="n">user_ids</span><span class="p">)</span>
+
+        <span class="n">service_provider_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="k">if</span> <span class="n">background_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">check_state</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_provider_id</span><span class="o">=</span><span class="n">service_provider_id</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">state</span>
+
+            <span class="k">def</span> <span class="nf">get_result</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="s1">&#39;DetailedResponse&#39;</span><span class="p">]]:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_provider_id</span><span class="o">=</span><span class="n">service_provider_id</span><span class="p">)</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">state</span>
+
+                <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Successfully finished adding service provider&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">details</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Add service provider failed with status: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> \
+                           <span class="s1">&#39;Reason: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">([</span><span class="s2">&quot;code: </span><span class="si">{}</span><span class="s2">, message: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="p">)</span> <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span>
+                                                <span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">failure</span><span class="o">.</span><span class="n">errors</span><span class="p">]),</span> <span class="n">details</span>
+
+            <span class="k">return</span> <span class="n">print_synchronous_run</span><span class="p">(</span>
+                <span class="s1">&#39;Waiting for end of adding service provider </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service_provider_id</span><span class="p">),</span>
+                <span class="n">check_state</span><span class="p">,</span>
+                <span class="n">get_result</span><span class="o">=</span><span class="n">get_result</span><span class="p">,</span>
+                <span class="n">success_states</span><span class="o">=</span><span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">]</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ServiceProviders.delete"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.service_providers.ServiceProviders.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+               <span class="n">service_provider_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+               <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">background_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DetailedResponse&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete service provider.</span>
+
+<span class="sd">        Detach Machine Learning service provider.</span>
+
+<span class="sd">        :param str service_provider_id: ID of the ML service provider.</span>
+<span class="sd">        :param bool force: (optional) force hard delete.</span>
+<span class="sd">        :param background_mode: if set to True, run will be in asynchronous mode, if set to False</span>
+<span class="sd">                it will wait for result (optional)</span>
+<span class="sd">        :type background_mode: bool</span>
+<span class="sd">        :return: A `DetailedResponse` containing the result, headers and HTTP status code.</span>
+<span class="sd">        :rtype: DetailedResponse</span>
+
+<span class="sd">        A way you may use me:</span>
+
+<span class="sd">        &gt;&gt;&gt; client.service_providers.delete(</span>
+<span class="sd">                background_mode=False,</span>
+<span class="sd">                service_provider_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                force=True</span>
+<span class="sd">             )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">service_provider_id</span><span class="o">=</span><span class="n">service_provider_id</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">background_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">check_state</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">service_provider_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">StatusStateType</span><span class="o">.</span><span class="n">FINISHED</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span>
+
+            <span class="k">def</span> <span class="nf">get_result</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="s1">&#39;DetailedResponse&#39;</span><span class="p">]]:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">service_provider_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="p">):</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="n">StatusStateType</span><span class="o">.</span><span class="n">FINISHED</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span>
+
+                <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">FINISHED</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Successfully finished deleting service provider&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">response</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Delete service provider failed&quot;</span><span class="p">,</span> <span class="s1">&#39;Reason: None&#39;</span><span class="p">,</span> <span class="n">response</span>  <span class="c1"># TODO: Need to show the reason.</span>
+
+            <span class="k">return</span> <span class="n">print_synchronous_run</span><span class="p">(</span>
+                <span class="s1">&#39;Waiting for end of deleting service provider </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service_provider_id</span><span class="p">),</span>
+                <span class="n">check_state</span><span class="p">,</span>
+                <span class="n">get_result</span><span class="o">=</span><span class="n">get_result</span><span class="p">,</span>
+                <span class="n">success_states</span><span class="o">=</span><span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">FINISHED</span><span class="p">]</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ServiceProviders.list_assets"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.service_providers.ServiceProviders.list_assets">[docs]</a>    <span class="k">def</span> <span class="nf">list_assets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_mart_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">service_provider_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">deployment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">deployment_space_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Response&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Listing all deployments and assets for specific data_mart and service_provider.</span>
+
+<span class="sd">        :param str data_mart_id: ID of the data_mart (required)</span>
+<span class="sd">        :param str service_provider_id: ID of the service_provider (required)</span>
+<span class="sd">        :param str deployment_id: ID of the deployment (optional), when used, only specific deployment is returned</span>
+<span class="sd">        :param str deployment_space_id: (optional) Reference to V2 Space ID</span>
+<span class="sd">        :return: Response</span>
+
+<span class="sd">        A way you may use me:</span>
+
+<span class="sd">        &gt;&gt;&gt; response = client.service_providers.list_assets(</span>
+<span class="sd">                data_mart_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                service_provider_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                deployment_space_id=&#39;6574djd4-00d2-4g05-ac02-287ebfc603b5&#39;</span>
+<span class="sd">             )</span>
+<span class="sd">        &gt;&gt;&gt; print(response.result)</span>
+<span class="sd">         {&#39;count&#39;: 1,</span>
+<span class="sd">         &#39;resources&#39;: [{&#39;entity&#39;: {&#39;asset&#39;: {&#39;asset_id&#39;: &#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                             &#39;asset_type&#39;: &#39;model&#39;,</span>
+<span class="sd">                                             &#39;created_at&#39;: &#39;2020-01-13T09:15:26.586Z&#39;,</span>
+<span class="sd">                                             &#39;name&#39;: &#39;AIOS Spark Credit Risk model&#39;,</span>
+<span class="sd">                                             &#39;url&#39;: &#39;https://us-south.ml.cloud.ibm.com/v3/wml_instances/997b1474-00d2-4g05-ac02-287ebfc603b5/published_models/997b1474-00d2-4g05-ac02-287ebfc603b5&#39;},</span>
+<span class="sd">                                   &#39;asset_properties&#39;: {&#39;asset_revision&#39;: &#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                                        &#39;input_data_schema&#39;: {&#39;fields&#39;: [{&#39;metadata&#39;: {},</span>
+<span class="sd">                                                                                          &#39;name&#39;: &#39;CheckingStatus&#39;,</span>
+<span class="sd">                                                                                          &#39;nullable&#39;: True,</span>
+<span class="sd">                                                                                          &#39;type&#39;: &#39;string&#39;},</span>
+<span class="sd">                                                                                         ...</span>
+<span class="sd">                                                        &#39;label_column&#39;: &#39;Risk&#39;,</span>
+<span class="sd">                                                        &#39;model_type&#39;: &#39;mllib-2.3&#39;,</span>
+<span class="sd">                                                        &#39;runtime_environment&#39;: &#39;spark-2.3&#39;,</span>
+<span class="sd">                                                        &#39;training_data_schema&#39;: {&#39;fields&#39;: [{&#39;metadata&#39;: {},</span>
+<span class="sd">                                                                                             &#39;name&#39;: &#39;CheckingStatus&#39;,</span>
+<span class="sd">                                                                                             &#39;nullable&#39;: True,</span>
+<span class="sd">                                                                                             &#39;type&#39;: &#39;string&#39;},</span>
+<span class="sd">                                                                                            ...</span>
+<span class="sd">                                   &#39;description&#39;: &#39;Description of deployment&#39;,</span>
+<span class="sd">                                   &#39;name&#39;: &#39;AIOS Spark Credit Risk deployment&#39;,</span>
+<span class="sd">                                   &#39;scoring_endpoint&#39;: {&#39;url&#39;: &#39;https://us-south.ml.cloud.ibm.com/v3/wml_instances/997b1474-00d2-4g05-ac02-287ebfc603b5/deployments/997b1474-00d2-4g05-ac02-287ebfc603b5/online&#39;},</span>
+<span class="sd">                                   &#39;type&#39;: &#39;online&#39;},</span>
+<span class="sd">                        &#39;metadata&#39;: {&#39;created_at&#39;: &#39;2020-01-13T09:15:26.607Z&#39;,</span>
+<span class="sd">                                     &#39;guid&#39;: &#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                     &#39;modified_at&#39;: &#39;2020-01-13T09:15:26.848Z&#39;,</span>
+<span class="sd">                                     &#39;url&#39;: &#39;https://us-south.ml.cloud.ibm.com/v3/wml_instances/997b1474-00d2-4g05-ac02-287ebfc603b5/deployments/997b1474-00d2-4g05-ac02-287ebfc603b5&#39;}}]}</span>
+<span class="sd">        &gt;&gt;&gt; response = client.service_providers.list_assets(</span>
+<span class="sd">                data_mart_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                service_provider_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;</span>
+<span class="sd">                deployment_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                deployment_space_id=&#39;6574djd4-00d2-4g05-ac02-287ebfc603b5&#39;</span>
+<span class="sd">             )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">data_mart_id</span><span class="p">,</span> <span class="s1">&#39;data_mart_id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">service_provider_id</span><span class="p">,</span> <span class="s1">&#39;service_provider_id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">deployment_id</span><span class="p">,</span> <span class="s1">&#39;deployment_id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">deployment_space_id</span><span class="p">,</span> <span class="s1">&#39;deployment_space_id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sdk_headers</span> <span class="o">=</span> <span class="n">get_sdk_headers</span><span class="p">(</span><span class="n">service_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">watson_open_scale</span><span class="o">.</span><span class="n">DEFAULT_SERVICE_NAME</span><span class="p">,</span>
+                                      <span class="n">service_version</span><span class="o">=</span><span class="s1">&#39;V1&#39;</span><span class="p">,</span>
+                                      <span class="n">operation_id</span><span class="o">=</span><span class="s1">&#39;get_asset_and_deployments_details&#39;</span><span class="p">)</span>
+        <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sdk_headers</span><span class="p">)</span>
+        <span class="n">provider_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_provider_id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span>
+        <span class="n">service_type</span> <span class="o">=</span> <span class="n">provider_details</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s1">&#39;entity&#39;</span><span class="p">][</span><span class="s1">&#39;service_type&#39;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">deployment_space_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;/v1/ml_instances/</span><span class="si">{</span><span class="n">service_provider_id</span><span class="si">}</span><span class="s1">/deployments?datamart_id=</span><span class="si">{</span><span class="n">data_mart_id</span><span class="si">}</span><span class="s1">&amp;limit=1000&#39;</span>
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/openscale/</span><span class="si">{</span><span class="n">data_mart_id</span><span class="si">}</span><span class="s2">/v2/ml_deployments?limit=100&amp;service_provider_id=</span><span class="si">{</span><span class="n">service_provider_id</span><span class="si">}</span><span class="s2">&amp;service_type=</span><span class="si">{</span><span class="n">service_type</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;&amp;space_id=</span><span class="si">{</span><span class="n">deployment_space_id</span><span class="si">}</span><span class="s1">&#39;</span>
+        
+        <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watson_open_scale</span><span class="o">.</span><span class="n">prepare_request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+                                                          <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                                                          <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">request</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="n">request</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="si">}{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watson_open_scale</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">deployment_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;resources&#39;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;resources&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;resources&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">resource</span> <span class="k">for</span> <span class="n">resource</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;resources&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">resource</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;guid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">deployment_id</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">response</span></div>
+    
+<div class="viewcode-block" id="ServiceProviders.get_deployment_asset"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.service_providers.ServiceProviders.get_deployment_asset">[docs]</a>    <span class="k">def</span> <span class="nf">get_deployment_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_mart_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">service_provider_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">deployment_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">deployment_space_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Response&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Listing all deployments and assets for specific data_mart and service_provider.</span>
+
+<span class="sd">        :param str data_mart_id: ID of the data_mart (required)</span>
+<span class="sd">        :param str service_provider_id: ID of the service_provider (required)</span>
+<span class="sd">        :param str deployment_id: ID of the deployment (required), when used, only specific deployment is returned</span>
+<span class="sd">        :param str deployment_space_id: Reference to V2 Space ID (required)</span>
+<span class="sd">        :return: Response</span>
+
+<span class="sd">        A way you may use me:</span>
+
+<span class="sd">        &gt;&gt;&gt; response = client.service_providers.list_assets(</span>
+<span class="sd">                data_mart_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                service_provider_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                deployment_space_id=&#39;6574djd4-00d2-4g05-ac02-287ebfc603b5&#39;</span>
+<span class="sd">             )</span>
+<span class="sd">        &gt;&gt;&gt; print(response.result)</span>
+<span class="sd">         {&#39;entity&#39;: {&#39;asset&#39;: {&#39;asset_id&#39;: &#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                             &#39;asset_type&#39;: &#39;model&#39;,</span>
+<span class="sd">                                             &#39;created_at&#39;: &#39;2020-01-13T09:15:26.586Z&#39;,</span>
+<span class="sd">                                             &#39;name&#39;: &#39;AIOS Spark Credit Risk model&#39;,</span>
+<span class="sd">                                             &#39;url&#39;: &#39;https://us-south.ml.cloud.ibm.com/v3/wml_instances/997b1474-00d2-4g05-ac02-287ebfc603b5/published_models/997b1474-00d2-4g05-ac02-287ebfc603b5&#39;},</span>
+<span class="sd">                                   &#39;asset_properties&#39;: {&#39;asset_revision&#39;: &#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                                        &#39;input_data_schema&#39;: {&#39;fields&#39;: [{&#39;metadata&#39;: {},</span>
+<span class="sd">                                                                                          &#39;name&#39;: &#39;CheckingStatus&#39;,</span>
+<span class="sd">                                                                                          &#39;nullable&#39;: True,</span>
+<span class="sd">                                                                                          &#39;type&#39;: &#39;string&#39;},</span>
+<span class="sd">                                                                                         ...</span>
+<span class="sd">                                                        &#39;label_column&#39;: &#39;Risk&#39;,</span>
+<span class="sd">                                                        &#39;model_type&#39;: &#39;mllib-2.3&#39;,</span>
+<span class="sd">                                                        &#39;runtime_environment&#39;: &#39;spark-2.3&#39;,</span>
+<span class="sd">                                                        &#39;training_data_schema&#39;: {&#39;fields&#39;: [{&#39;metadata&#39;: {},</span>
+<span class="sd">                                                                                             &#39;name&#39;: &#39;CheckingStatus&#39;,</span>
+<span class="sd">                                                                                             &#39;nullable&#39;: True,</span>
+<span class="sd">                                                                                             &#39;type&#39;: &#39;string&#39;},</span>
+<span class="sd">                                                                                            ...</span>
+<span class="sd">                                   &#39;description&#39;: &#39;Description of deployment&#39;,</span>
+<span class="sd">                                   &#39;name&#39;: &#39;AIOS Spark Credit Risk deployment&#39;,</span>
+<span class="sd">                                   &#39;scoring_endpoint&#39;: {&#39;url&#39;: &#39;https://us-south.ml.cloud.ibm.com/v3/wml_instances/997b1474-00d2-4g05-ac02-287ebfc603b5/deployments/997b1474-00d2-4g05-ac02-287ebfc603b5/online&#39;},</span>
+<span class="sd">                                   &#39;type&#39;: &#39;online&#39;},</span>
+<span class="sd">                        &#39;metadata&#39;: {&#39;created_at&#39;: &#39;2020-01-13T09:15:26.607Z&#39;,</span>
+<span class="sd">                                     &#39;guid&#39;: &#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                     &#39;modified_at&#39;: &#39;2020-01-13T09:15:26.848Z&#39;,</span>
+<span class="sd">                                     &#39;url&#39;: &#39;https://us-south.ml.cloud.ibm.com/v3/wml_instances/997b1474-00d2-4g05-ac02-287ebfc603b5/deployments/997b1474-00d2-4g05-ac02-287ebfc603b5&#39;}}</span>
+<span class="sd">        &gt;&gt;&gt; response = client.service_providers.get_deployment_asset(</span>
+<span class="sd">                data_mart_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                service_provider_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;</span>
+<span class="sd">                deployment_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                deployment_space_id=&#39;6574djd4-00d2-4g05-ac02-287ebfc603b5&#39;</span>
+<span class="sd">             )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">data_mart_id</span><span class="p">,</span> <span class="s1">&#39;data_mart_id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">service_provider_id</span><span class="p">,</span> <span class="s1">&#39;service_provider_id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">deployment_id</span><span class="p">,</span> <span class="s1">&#39;deployment_id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">deployment_space_id</span><span class="p">,</span> <span class="s1">&#39;deployment_space_id&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sdk_headers</span> <span class="o">=</span> <span class="n">get_sdk_headers</span><span class="p">(</span><span class="n">service_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">watson_open_scale</span><span class="o">.</span><span class="n">DEFAULT_SERVICE_NAME</span><span class="p">,</span>
+                                      <span class="n">service_version</span><span class="o">=</span><span class="s1">&#39;V1&#39;</span><span class="p">,</span>
+                                      <span class="n">operation_id</span><span class="o">=</span><span class="s1">&#39;get_asset_and_deployments_details&#39;</span><span class="p">)</span>
+        <span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sdk_headers</span><span class="p">)</span>
+        <span class="n">provider_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_provider_id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span>
+        <span class="n">service_type</span> <span class="o">=</span> <span class="n">provider_details</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s1">&#39;entity&#39;</span><span class="p">][</span><span class="s1">&#39;service_type&#39;</span><span class="p">]</span>
+        
+        
+        <span class="k">if</span> <span class="n">deployment_space_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;/v1/ml_instances/</span><span class="si">{</span><span class="n">service_provider_id</span><span class="si">}</span><span class="s1">/deployments?datamart_id=</span><span class="si">{</span><span class="n">data_mart_id</span><span class="si">}</span><span class="s1">&amp;limit=1000&#39;</span>
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/openscale/</span><span class="si">{</span><span class="n">data_mart_id</span><span class="si">}</span><span class="s2">/v2/ml_deployments/</span><span class="si">{</span><span class="n">deployment_id</span><span class="si">}</span><span class="s2">?service_provider_id=</span><span class="si">{</span><span class="n">service_provider_id</span><span class="si">}</span><span class="s2">&amp;service_type=</span><span class="si">{</span><span class="n">service_type</span><span class="si">}</span><span class="s2">&amp;space_id=</span><span class="si">{</span><span class="n">deployment_space_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        
+        <span class="n">request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watson_open_scale</span><span class="o">.</span><span class="n">prepare_request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+                                                          <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                                                          <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">request</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="n">request</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="si">}{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watson_open_scale</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+       
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span></div></div>
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on May 29, 2023.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

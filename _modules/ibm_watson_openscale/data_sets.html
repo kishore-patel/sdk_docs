@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ibm_watson_openscale.data_sets &mdash; IBM Watson OpenScale 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            IBM Watson OpenScale
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">IBM Watson OpenScale</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ibm_watson_openscale.data_sets</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ibm_watson_openscale.data_sets</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+
+<span class="c1"># Copyright 2020 IBM All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#      http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BufferedReader</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">ibm_cloud_sdk_core</span> <span class="kn">import</span> <span class="n">BaseService</span>
+
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.tables</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.common</span> <span class="kn">import</span> <span class="n">get_sdk_headers</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.watson_open_scale_v2</span> <span class="kn">import</span> <span class="n">DataSets</span> <span class="k">as</span> <span class="n">BaseDataSets</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.watson_open_scale_v2</span> <span class="kn">import</span> <span class="n">Records</span><span class="p">,</span> <span class="n">Requests</span>
+<span class="kn">from</span> <span class="nn">ibm_watson_openscale.supporting_classes.payload_record</span> <span class="kn">import</span> <span class="n">PayloadRecord</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.client</span> <span class="kn">import</span> <span class="n">WatsonOpenScaleV2Adapter</span>
+    <span class="kn">from</span> <span class="nn">ibm_watson_openscale.base_classes.watson_open_scale_v2</span> <span class="kn">import</span> <span class="n">DetailedResponse</span><span class="p">,</span> <span class="n">ScoringPayloadRequest</span>
+
+<span class="n">_DEFAULT_LIST_LENGTH</span> <span class="o">=</span> <span class="mi">50</span>
+
+
+<div class="viewcode-block" id="DataSets"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets">[docs]</a><span class="k">class</span> <span class="nc">DataSets</span><span class="p">(</span><span class="n">BaseDataSets</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages Data Sets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ai_client</span><span class="p">:</span> <span class="s1">&#39;WatsonOpenScaleV2Adapter&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">ai_client</span><span class="p">,</span> <span class="s1">&#39;ai_client&#39;</span><span class="p">,</span> <span class="n">BaseService</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ai_client</span> <span class="o">=</span> <span class="n">ai_client</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">watson_open_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ai_client</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DataSets.show"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+             <span class="n">target_target_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">target_target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">managed_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show data sets. By default 10 records will be shown.</span>
+
+<span class="sd">        :param limit: maximal number of fetched rows. By default set to 10. (optional)</span>
+<span class="sd">        :type limit: int</span>
+<span class="sd">        :param str target_target_id: (optional) ID of the data set target (e.g.</span>
+<span class="sd">               subscription ID, business application ID).</span>
+<span class="sd">        :param str target_target_type: (optional) type of the target.</span>
+<span class="sd">        :param str type: (optional) type of the data set.</span>
+<span class="sd">        :param str managed_by: (optional) ID of the managing entity (e.g. business</span>
+<span class="sd">               application ID).</span>
+<span class="sd">        :param dict headers: A `dict` containing the request headers               </span>
+<span class="sd">        :return: None</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt;   client.data_sets.show()</span>
+<span class="sd">        &gt;&gt;&gt;   client.data_sets.show(limit=20)</span>
+<span class="sd">        &gt;&gt;&gt;   client.data_sets.show(limit=None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate_type</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;limit&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">target_target_id</span> <span class="o">=</span> <span class="n">target_target_id</span><span class="p">,</span>
+             <span class="n">target_target_type</span> <span class="o">=</span> <span class="n">target_target_type</span><span class="p">,</span>
+             <span class="nb">type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">,</span>
+             <span class="n">managed_by</span> <span class="o">=</span> <span class="n">managed_by</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">records</span> <span class="o">=</span> <span class="p">[[</span><span class="n">data_set</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">data_mart_id</span><span class="p">,</span>
+                    <span class="n">data_set</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                    <span class="n">data_set</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">target_id</span><span class="p">,</span>
+                    <span class="n">data_set</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">target_type</span><span class="p">,</span>
+                    <span class="n">data_set</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                    <span class="n">data_set</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">created_at</span><span class="p">,</span>
+                    <span class="n">data_set</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">id</span>
+                    <span class="p">]</span> <span class="k">for</span> <span class="n">data_set</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">data_sets</span><span class="p">]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data_mart_id&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;target_id&#39;</span><span class="p">,</span> <span class="s1">&#39;target_type&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="n">Table</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">records</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+            <span class="n">default_limit</span><span class="o">=</span><span class="n">_DEFAULT_LIST_LENGTH</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Data sets&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataSets.add"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">data_mart_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">:</span> <span class="s1">&#39;Target&#39;</span><span class="p">,</span>
+            <span class="n">data_schema</span><span class="p">:</span> <span class="s1">&#39;SparkStruct&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">schema_update_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">location</span><span class="p">:</span> <span class="s1">&#39;LocationTableName&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">managed_by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">background_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;DetailedResponse&#39;</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create Data Set.</span>
+
+<span class="sd">        :param str data_mart_id:</span>
+<span class="sd">        :param str name:</span>
+<span class="sd">        :param str type:</span>
+<span class="sd">        :param Target target:</span>
+<span class="sd">        :param SparkStruct data_schema:</span>
+<span class="sd">        :param str description: (optional)</span>
+<span class="sd">        :param str schema_update_mode: (optional)</span>
+<span class="sd">        :param LocationTableName location: (optional)</span>
+<span class="sd">        :param str managed_by: (optional)</span>
+<span class="sd">        :param background_mode: if set to True, run will be in asynchronous mode, if set to False</span>
+<span class="sd">                it will wait for result (optional)</span>
+<span class="sd">        :type background_mode: bool</span>
+<span class="sd">        :return: A `DetailedResponse` containing the result, headers and HTTP status code.</span>
+<span class="sd">        :rtype: DetailedResponse with `DataSetResponse` result</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale import *</span>
+<span class="sd">        &gt;&gt;&gt; target = Target(</span>
+<span class="sd">                 target_id=&#39;subscription_id&#39;,</span>
+<span class="sd">                  target_type=TargetTypes.SUBSCRIPTION</span>
+<span class="sd">               )</span>
+<span class="sd">        &gt;&gt;&gt; data_schema = SparkStruct(</span>
+<span class="sd">                  type=&#39;struct&#39;,</span>
+<span class="sd">                  fields=[</span>
+<span class="sd">                      SparkStructField(</span>
+<span class="sd">                          name=&#39;CheckingStatus&#39;,</span>
+<span class="sd">                          type=&#39;string&#39;,</span>
+<span class="sd">                          nullable=True,</span>
+<span class="sd">                          metadata={&#39;columnInfo&#39;: {&#39;columnLength&#39;: 64},</span>
+<span class="sd">                                    &#39;measure&#39;: &#39;discrete&#39;,</span>
+<span class="sd">                                    &#39;modeling_role&#39;: &#39;feature&#39;}</span>
+<span class="sd">                      ),</span>
+<span class="sd">                      SparkStructField(</span>
+<span class="sd">                          name=&#39;LoanDuration&#39;,</span>
+<span class="sd">                          type=&#39;integer&#39;,</span>
+<span class="sd">                          nullable=True,</span>
+<span class="sd">                          metadata={&#39;modeling_role&#39;: &#39;feature&#39;}</span>
+<span class="sd">                      ),</span>
+<span class="sd">                      SparkStructField(</span>
+<span class="sd">                          name=&#39;asset_revision&#39;,</span>
+<span class="sd">                          type=&#39;string&#39;,</span>
+<span class="sd">                          nullable=True,</span>
+<span class="sd">                          metadata={}</span>
+<span class="sd">                      )</span>
+<span class="sd">                  ]</span>
+<span class="sd">               )</span>
+<span class="sd">        &gt;&gt;&gt; custom_dataset_info = client.data_sets.add(</span>
+<span class="sd">                  target=target,</span>
+<span class="sd">                  name=&#39;custom dataset&#39;,</span>
+<span class="sd">                  type=&#39;custom&#39;,</span>
+<span class="sd">                  data_schema=data_schema,</span>
+<span class="sd">                  data_mart_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;</span>
+<span class="sd">               )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">data_mart_id</span><span class="o">=</span><span class="n">data_mart_id</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
+                               <span class="n">data_schema</span><span class="o">=</span><span class="n">data_schema</span><span class="p">,</span>
+                               <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">schema_update_mode</span><span class="o">=</span><span class="n">schema_update_mode</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
+                               <span class="n">managed_by</span><span class="o">=</span><span class="n">managed_by</span><span class="p">)</span>
+
+        <span class="n">data_set_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="k">if</span> <span class="n">background_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">check_state</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">state</span>
+
+            <span class="k">def</span> <span class="nf">get_result</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="s1">&#39;DetailedResponse&#39;</span><span class="p">]]:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">)</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">state</span>
+
+                <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Successfully finished adding data set&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">details</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Add data set failed with status: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> \
+                           <span class="s1">&#39;Reason: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">([</span><span class="s2">&quot;code: </span><span class="si">{}</span><span class="s2">, message: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="p">)</span> <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span>
+                                                <span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">failure</span><span class="o">.</span><span class="n">errors</span><span class="p">]),</span> <span class="n">details</span>
+
+            <span class="k">return</span> <span class="n">print_synchronous_run</span><span class="p">(</span>
+                <span class="s1">&#39;Waiting for end of adding data set </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_set_id</span><span class="p">),</span>
+                <span class="n">check_state</span><span class="p">,</span>
+                <span class="n">get_result</span><span class="o">=</span><span class="n">get_result</span><span class="p">,</span>
+                <span class="n">success_states</span><span class="o">=</span><span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">]</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataSets.delete"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_set_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">background_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;DetailedResponse&#39;</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete Data Set.</span>
+
+<span class="sd">        :param str data_set_id: ID of the data set.</span>
+<span class="sd">        :param background_mode: if set to True, run will be in asynchronous mode, if set to False</span>
+<span class="sd">                it will wait for result (optional)</span>
+<span class="sd">        :type background_mode: bool</span>
+<span class="sd">        :return: A `DetailedResponse` containing the result, headers and HTTP status code.</span>
+<span class="sd">        :rtype: DetailedResponse</span>
+
+<span class="sd">        A way you may use me:</span>
+
+<span class="sd">        &gt;&gt;&gt; client.data_sets.delete(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">background_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">check_state</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">data_set_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">StatusStateType</span><span class="o">.</span><span class="n">FINISHED</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span>
+
+            <span class="k">def</span> <span class="nf">get_result</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="s1">&#39;DetailedResponse&#39;</span><span class="p">]]:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">data_set_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="p">):</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="n">StatusStateType</span><span class="o">.</span><span class="n">FINISHED</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span>
+
+                <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">FINISHED</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Successfully finished deleting data set&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">response</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Delete data set failed&quot;</span><span class="p">,</span> <span class="s1">&#39;Reason: None&#39;</span><span class="p">,</span> <span class="n">response</span>  <span class="c1"># TODO: Need to show the reason.</span>
+
+            <span class="k">return</span> <span class="n">print_synchronous_run</span><span class="p">(</span>
+                <span class="s1">&#39;Waiting for end of deleting data set </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_set_id</span><span class="p">),</span>
+                <span class="n">check_state</span><span class="p">,</span>
+                <span class="n">get_result</span><span class="o">=</span><span class="n">get_result</span><span class="p">,</span>
+                <span class="n">success_states</span><span class="o">=</span><span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">FINISHED</span><span class="p">]</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataSets.store_records"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.store_records">[docs]</a>    <span class="k">def</span> <span class="nf">store_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">data_set_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">request_body</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;BufferedReader&#39;</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;PayloadRecord&#39;</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]],</span>
+                      <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">on_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">csv_max_line_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="n">background_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;DetailedResponse&#39;</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store records to specific data set.</span>
+
+<span class="sd">        :param str data_set_id: ID of the data set.</span>
+<span class="sd">        :param list[ScoringPayloadRequest] scoring_payload_request:</span>
+<span class="sd">        :param bool header: (optional) if not provided service will attempt to</span>
+<span class="sd">               automatically detect header in the first line.</span>
+<span class="sd">        :param int skip: (optional) skip number of rows from input.</span>
+<span class="sd">        :param int limit: (optional) limit for number of processed input rows.</span>
+<span class="sd">        :param str delimiter: (optional) delimiter character for data provided as</span>
+<span class="sd">               csv.</span>
+<span class="sd">        :param str on_error: (optional) expected behaviour on error.</span>
+<span class="sd">        :param float csv_max_line_length: (optional) maximum length of single line</span>
+<span class="sd">               in bytes (default 10MB).</span>
+<span class="sd">        :param background_mode: if set to True, run will be in asynchronous mode, if set to False</span>
+<span class="sd">                it will wait for result (optional)</span>
+<span class="sd">        :type background_mode: bool</span>
+<span class="sd">        :return: A `DetailedResponse` containing the result, headers and HTTP status code.</span>
+<span class="sd">        :rtype: DetailedResponse with `Status` result</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale import *</span>
+<span class="sd">        &gt;&gt;&gt; store_record_info = client.data_sets.store_records(</span>
+<span class="sd">              request_body=[</span>
+<span class="sd">                        {</span>
+<span class="sd">                          &quot;GENDER&quot;: &quot;M&quot;,</span>
+<span class="sd">                          &quot;PRODUCT_LINE&quot;: &quot;Golf Equipment&quot;,</span>
+<span class="sd">                          &quot;AGE&quot;: 25,</span>
+<span class="sd">                          &quot;MARITAL_STATUS&quot;: &quot;Unspecified&quot;,</span>
+<span class="sd">                          &quot;PROFESSION&quot;: &quot;Sales&quot;</span>
+<span class="sd">                        },</span>
+<span class="sd">                        {</span>
+<span class="sd">                          &quot;GENDER&quot;: &quot;M&quot;,</span>
+<span class="sd">                          &quot;PRODUCT_LINE&quot;: &quot;Sport shoes&quot;,</span>
+<span class="sd">                          &quot;AGE&quot;: 28,</span>
+<span class="sd">                          &quot;MARITAL_STATUS&quot;: &quot;Married&quot;,</span>
+<span class="sd">                          &quot;PROFESSION&quot;: &quot;Sales&quot;</span>
+<span class="sd">                        },</span>
+<span class="sd">                        {</span>
+<span class="sd">                          &quot;GENDER&quot;: &quot;F&quot;,</span>
+<span class="sd">                          &quot;PRODUCT_LINE&quot;: &quot;Sport shoes&quot;,</span>
+<span class="sd">                          &quot;AGE&quot;: 25,</span>
+<span class="sd">                          &quot;MARITAL_STATUS&quot;: &quot;Single&quot;,</span>
+<span class="sd">                          &quot;PROFESSION&quot;: &quot;Software Developer&quot;</span>
+<span class="sd">                        }</span>
+<span class="sd">                  ],</span>
+<span class="sd">              data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">          )</span>
+<span class="sd">        &gt;&gt;&gt; from ibm_watson_openscale.supporting_classes.payload_record import PayloadRecord</span>
+<span class="sd">        &gt;&gt;&gt; store_record_info = client.data_sets.store_records(</span>
+<span class="sd">              request_body=[PayloadRecord(</span>
+<span class="sd">                   scoring_id=&#39;42e62c3ae2244f0d851009dec4754d74&#39;,</span>
+<span class="sd">                   request={</span>
+<span class="sd">                      &quot;fields&quot;: [&quot;CheckingStatus&quot;, &quot;LoanDuration&quot;, &quot;CreditHistory&quot;, &quot;LoanPurpose&quot;,</span>
+<span class="sd">                          &quot;LoanAmount&quot;, &quot;ExistingSavings&quot;, &quot;EmploymentDuration&quot;, &quot;InstallmentPercent&quot;, &quot;Sex&quot;,</span>
+<span class="sd">                          &quot;OthersOnLoan&quot;, &quot;CurrentResidenceDuration&quot;, &quot;OwnsProperty&quot;, &quot;Age&quot;, &quot;InstallmentPlans&quot;,</span>
+<span class="sd">                          &quot;Housing&quot;, &quot;ExistingCreditsCount&quot;, &quot;Job&quot;, &quot;Dependents&quot;, &quot;Telephone&quot;, &quot;ForeignWorker&quot;],</span>
+<span class="sd">                      &quot;values&quot;: [[&quot;less_0&quot;, 4, &quot;all_credits_paid_back&quot;, &quot;car_new&quot;, 250, &quot;less_100&quot;, &quot;less_1&quot;, 2,</span>
+<span class="sd">                          &quot;male&quot;, &quot;none&quot;, 1, &quot;real_estate&quot;, 26, &quot;stores&quot;, &quot;rent&quot;, 1, &quot;unskilled&quot;, 1,</span>
+<span class="sd">                          &quot;none&quot;, &quot;yes&quot;]]</span>
+<span class="sd">                      },</span>
+<span class="sd">                   response={</span>
+<span class="sd">                      &quot;fields&quot;: [&quot;CheckingStatus&quot;, &quot;LoanDuration&quot;, &quot;CreditHistory&quot;, &quot;LoanPurpose&quot;, &quot;LoanAmount&quot;,</span>
+<span class="sd">                          &quot;ExistingSavings&quot;, &quot;EmploymentDuration&quot;, &quot;InstallmentPercent&quot;, &quot;Sex&quot;, &quot;OthersOnLoan&quot;,</span>
+<span class="sd">                          &quot;CurrentResidenceDuration&quot;, &quot;OwnsProperty&quot;, &quot;Age&quot;, &quot;InstallmentPlans&quot;, &quot;Housing&quot;,</span>
+<span class="sd">                          &quot;ExistingCreditsCount&quot;, &quot;Job&quot;, &quot;Dependents&quot;, &quot;Telephone&quot;, &quot;ForeignWorker&quot;,</span>
+<span class="sd">                          &quot;CheckingStatus_IX&quot;, &quot;CreditHistory_IX&quot;, &quot;EmploymentDuration_IX&quot;, &quot;ExistingSavings_IX&quot;,</span>
+<span class="sd">                          &quot;ForeignWorker_IX&quot;, &quot;Housing_IX&quot;, &quot;InstallmentPlans_IX&quot;, &quot;Job_IX&quot;, &quot;LoanPurpose_IX&quot;,</span>
+<span class="sd">                          &quot;OthersOnLoan_IX&quot;, &quot;OwnsProperty_IX&quot;, &quot;Sex_IX&quot;, &quot;Telephone_IX&quot;, &quot;features&quot;, &quot;rawPrediction&quot;,</span>
+<span class="sd">                          &quot;probability&quot;, &quot;prediction&quot;, &quot;predictedLabel&quot;],</span>
+<span class="sd">                      &quot;values&quot;: [[&quot;less_0&quot;, 4, &quot;all_credits_paid_back&quot;, &quot;car_new&quot;, 250, &quot;less_100&quot;, &quot;less_1&quot;, 2,</span>
+<span class="sd">                          &quot;male&quot;, &quot;none&quot;, 1, &quot;real_estate&quot;, 26, &quot;stores&quot;, &quot;rent&quot;, 1, &quot;unskilled&quot;, 1, &quot;none&quot;, &quot;yes&quot;,</span>
+<span class="sd">                          1.0, 3.0, 3.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 2.0, 0.0, 0.0, [1.0, 3.0, 0.0, 0.0, 3.0,</span>
+<span class="sd">                          0.0, 0.0, 2.0, 1.0, 1.0, 1.0, 0.0, 0.0, 4.0, 250.0, 2.0, 1.0, 4.0, 26.0, 1.0, 1.0],</span>
+<span class="sd">                          [19.600662549552556, 0.39933745044744245], [0.9800331274776278, 0.01996687252237212],</span>
+<span class="sd">                          0.0, &quot;No Risk&quot;]]</span>
+<span class="sd">                      },</span>
+<span class="sd">                   response_time=460,</span>
+<span class="sd">                   user_id=&#39;IBM-1234&#39;</span>
+<span class="sd">               )],</span>
+<span class="sd">              data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">          )</span>
+<span class="sd">          </span>
+<span class="sd">        &gt;&gt;&gt; csv_buffer_reader = io.open(&#39;path_to_csv&#39;, mode=&quot;rb&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; store_record_info = client.data_sets.store_records(</span>
+<span class="sd">              request_body=csv_buffer_reader,</span>
+<span class="sd">              delimiter=&#39;,&#39;,</span>
+<span class="sd">              header=True,</span>
+<span class="sd">              limit=100,</span>
+<span class="sd">              data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">              csv_max_line_length = 8196</span>
+<span class="sd">          )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">records_client</span> <span class="o">=</span> <span class="n">Records</span><span class="p">(</span><span class="n">watson_open_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ai_client</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request_body</span><span class="p">,</span> <span class="n">BufferedReader</span><span class="p">):</span>
+            <span class="n">validate_type</span><span class="p">(</span><span class="n">request_body</span><span class="p">,</span> <span class="s2">&quot;request_body&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BufferedReader</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">validate_type</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">validate_type</span><span class="p">(</span><span class="n">delimiter</span><span class="p">,</span> <span class="s2">&quot;delimiter&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">validate_type</span><span class="p">(</span><span class="n">csv_max_line_length</span><span class="p">,</span> <span class="s2">&quot;csv_max_line_length&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">records_client</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">on_error</span><span class="o">=</span><span class="s1">&#39;continue&#39;</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span>
+                <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+                <span class="n">request_body</span><span class="o">=</span><span class="n">request_body</span><span class="p">,</span>
+                <span class="n">csv_max_line_length</span><span class="o">=</span><span class="n">csv_max_line_length</span><span class="p">,</span>
+                <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span>
+                <span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/csv&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request_body</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">request_body</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request_body</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PayloadRecord</span><span class="p">):</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">records_client</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">request_body</span><span class="o">=</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">request_body</span><span class="p">],</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+                <span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request_body</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">request_body</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request_body</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> \
+                <span class="s1">&#39;fields&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">request_body</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;values&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">request_body</span><span class="p">):</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">records_client</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">request_body</span><span class="o">=</span><span class="n">request_body</span><span class="p">,</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+                <span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request_body</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">request_body</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request_body</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">records_client</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">request_body</span><span class="o">=</span><span class="n">request_body</span><span class="p">,</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+                <span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">IncorrectParameter</span><span class="p">(</span>
+                <span class="s1">&#39;request_body&#39;</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;request_body parameter should be one of: &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;[BufferedReader, List[PayloadRecord], List[Dict[fields, values]], List[Dict]]&quot;</span><span class="p">)</span>
+
+        <span class="n">request_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">_store</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">background_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">check_state</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_update_status</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="n">request_id</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">state</span>
+
+            <span class="k">def</span> <span class="nf">get_result</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="s1">&#39;DetailedResponse&#39;</span><span class="p">]]:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_update_status</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="n">request_id</span><span class="p">)</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">state</span>
+                <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Successfully finished storing records&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">details</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Store records failed with status: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> \
+                           <span class="s1">&#39;Reason: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">details</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">failure</span><span class="p">),</span> <span class="n">details</span>
+
+            <span class="k">return</span> <span class="n">print_synchronous_run</span><span class="p">(</span>
+                <span class="s1">&#39;Waiting for end of storing records with request id: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request_id</span><span class="p">),</span>
+                <span class="n">check_state</span><span class="p">,</span>
+                <span class="n">get_result</span><span class="o">=</span><span class="n">get_result</span><span class="p">,</span>
+                <span class="n">success_states</span><span class="o">=</span><span class="p">[</span><span class="n">StatusStateType</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">]</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataSets.get_update_status"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.get_update_status">[docs]</a>    <span class="k">def</span> <span class="nf">get_update_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                          <span class="n">data_set_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">request_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DetailedResponse&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get status of the specific request.</span>
+
+<span class="sd">        :param str data_set_id: ID of the data set.</span>
+<span class="sd">        :param str request_id: ID of the request.</span>
+<span class="sd">        :return: A `DetailedResponse` containing the result, headers and HTTP status code.</span>
+<span class="sd">        :rtype: DetailedResponse with `Status` result</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; update_status = client.data_sets.get_update_status(</span>
+<span class="sd">              data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">              request_id=&#39;7843-00d35462-346-ac0672-7357&#39;</span>
+<span class="sd">           )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">requests_client</span> <span class="o">=</span> <span class="n">Requests</span><span class="p">(</span><span class="n">watson_open_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ai_client</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">requests_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="n">request_id</span><span class="p">)</span></div>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    def get_request_status(self, data_set_id: str, request_id: str, **kwargs) -&gt; &#39;DetailedResponse&#39;:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Get status of the specific request.</span>
+<span class="sd">        :param str data_set_id: ID of the data set.</span>
+<span class="sd">        :param str request_id: ID of the request.</span>
+<span class="sd">        :param dict headers: A `dict` containing the request headers</span>
+<span class="sd">        :return: A `DetailedResponse` containing the result, headers and HTTP status code.</span>
+<span class="sd">        :rtype: DetailedResponse with `Status` result</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="sd">        if data_set_id is None:</span>
+<span class="sd">            raise ValueError(&#39;data_set_id must be provided&#39;)</span>
+<span class="sd">        if request_id is None:</span>
+<span class="sd">            raise ValueError(&#39;request_id must be provided&#39;)</span>
+<span class="sd">        headers = {}</span>
+<span class="sd">        if &#39;headers&#39; in kwargs:</span>
+<span class="sd">            headers.update(kwargs.get(&#39;headers&#39;))</span>
+<span class="sd">        sdk_headers = get_sdk_headers(service_name=self._ai_client.DEFAULT_SERVICE_NAME, service_version=&#39;V2&#39;,</span>
+<span class="sd">                                      operation_id=&#39;data_sets_get_request_status&#39;)</span>
+<span class="sd">        headers.update(sdk_headers)</span>
+
+<span class="sd">        url = &#39;/v2/data_sets/{0}/requests/{1}&#39;.format(</span>
+<span class="sd">            *self._ai_client.encode_path_vars(data_set_id, request_id))</span>
+<span class="sd">        request = self._ai_client.prepare_request(method=&#39;GET&#39;,</span>
+<span class="sd">                                                          url=url,</span>
+<span class="sd">                                                          headers=headers)</span>
+
+<span class="sd">        response = self._ai_client.send(request)</span>
+<span class="sd">        print(response.result)</span>
+<span class="sd">        response.result = Status.from_dict(response.result)</span>
+<span class="sd">        return response</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="DataSets.get_list_of_records"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.get_list_of_records">[docs]</a>    <span class="k">def</span> <span class="nf">get_list_of_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                            <span class="n">data_set_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+                            <span class="n">start</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">end</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="nb">filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">include_total_count</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">output_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">include_internal_columns</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span><span class="n">return_payload_raw_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;DetailedResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;DataFrame&#39;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List data set records.</span>
+
+<span class="sd">        :param str data_set_id: ID of the data set.</span>
+<span class="sd">        :param int limit: By default it will return 100 records. If the</span>
+<span class="sd">               value is greater than 1000 than it will be truncated.</span>
+<span class="sd">        :param datetime start: (optional) return records with timestamp greater</span>
+<span class="sd">               than or equal to `start` parameter. Date string should be in the UTC ISO 8601 format. Ex: 2021-06-10T09:43:53.309Z</span>
+<span class="sd">        :param datetime end: (optional) return records with timestamp lower than</span>
+<span class="sd">               `end` parameter. Date string should be in the UTC ISO 8601 format. Ex: 2021-06-10T09:43:53.309Z</span>
+<span class="sd">        :param int offset: (optional) offset of returned records.</span>
+<span class="sd">        :param list[str] annotations: (optional) return record annotations with</span>
+<span class="sd">               given names.</span>
+<span class="sd">        :param str filter: (optional) return records for which transaction ids in</span>
+<span class="sd">               associated data set the condition is met, format:</span>
+<span class="sd">               {data_set_id}.{field_name}:{op}:{value}.</span>
+<span class="sd">        :param bool include_total_count: (optional) If total_count should be</span>
+<span class="sd">               included. It can have performance impact if total_count is calculated.</span>
+<span class="sd">        :param str filter: (optional) return records for which transaction ids in</span>
+<span class="sd">               associated data set the condition is met, format:</span>
+<span class="sd">               {data_set_id}.{field_name}:{op}:{value}.</span>
+<span class="sd">        :param str format: (optional) What JSON format to use on output.</span>
+<span class="sd">        :param str output_type: (optional) type of the response data to be present, default is &#39;dict&#39;,</span>
+<span class="sd">                available option is &#39;pandas&#39;</span>
+<span class="sd">        :param bool include_internal_columns: (optional) Flag to retrieve internal columns</span>
+<span class="sd">        :param bool return_payload_raw_data: (optional) Flag to retrieve only the raw data which was used for scoring. </span>
+<span class="sd">                                  Applicable to only Payload Logging data and format is &#39;pandas&#39;    </span>
+<span class="sd">        :return: A `DetailedResponse` containing the result, headers and HTTP status code.</span>
+<span class="sd">        :rtype: DetailedResponse with `DataRecordsResponseCollection` result</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; records = client.data_sets.get_list_of_records(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; records = client.data_sets.get_list_of_records(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                                           format=RecordsFormatTypes.DICT</span>
+<span class="sd">           )</span>
+<span class="sd">        &gt;&gt;&gt; records = client.data_sets.get_list_of_records(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                                           format=RecordsFormatTypes.LIST</span>
+<span class="sd">           )</span>
+<span class="sd">        &gt;&gt;&gt; records = client.data_sets.get_list_of_records(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                                           output_type=ResponseTypes.PYTHON</span>
+<span class="sd">           )</span>
+<span class="sd">        &gt;&gt;&gt; records = client.data_sets.get_list_of_records(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;,</span>
+<span class="sd">                                                           output_type=ResponseTypes.PANDAS</span>
+<span class="sd">           )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">records_client</span> <span class="o">=</span> <span class="n">Records</span><span class="p">(</span><span class="n">watson_open_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ai_client</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">records_client</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                                               <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span>
+                                               <span class="n">include_total_count</span><span class="o">=</span><span class="n">include_total_count</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">output_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ResponseTypes</span><span class="o">.</span><span class="n">PANDAS</span> <span class="o">==</span> <span class="n">output_type</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+            <span class="c1"># note: issue: planning-sdk-squad #1367</span>
+            <span class="c1"># fields = list(response.result.records[0].entity.values.keys())</span>
+            <span class="c1"># values = [list(record.entity.values.values()) for record in response.result.records]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="n">RecordsFormatTypes</span><span class="o">.</span><span class="n">DICT</span> <span class="ow">or</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;entity&#39;</span><span class="p">][</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="k">if</span> <span class="n">include_internal_columns</span><span class="p">:</span>
+                        <span class="n">values</span> <span class="o">=</span> <span class="p">[[</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">][</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">fields</span><span class="p">)</span> <span class="p">]</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">]]</span>
+                    <span class="k">else</span><span class="p">:</span>    
+                        <span class="n">values</span> <span class="o">=</span> <span class="p">[[</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">&#39;entity&#39;</span><span class="p">][</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">fields</span><span class="p">)</span> <span class="k">if</span>
+                               <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">]]</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;fields&#39;</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">include_internal_columns</span><span class="p">:</span>
+                        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]),</span> <span class="n">fields</span><span class="p">)</span> <span class="p">]</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">]]</span>
+                    <span class="k">else</span><span class="p">:</span>    
+                        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+                            <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]),</span> <span class="n">fields</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span> <span class="k">for</span>
+                            <span class="n">record</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">]]</span>
+                        
+                <span class="k">if</span> <span class="n">include_internal_columns</span><span class="p">:</span>
+                    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>             
+                    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+            
+            <span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>    
+            <span class="k">if</span> <span class="n">return_payload_raw_data</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>   
+                <span class="n">all_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">data_schema</span><span class="o">.</span><span class="n">fields</span>
+                <span class="n">input_features</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">all_fields</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;modeling_role&#39;</span> <span class="ow">in</span> <span class="n">field</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;modeling_role&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;feature&#39;</span><span class="p">):</span>
+                        <span class="n">input_features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>    
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">input_features</span><span class="p">]</span>
+                
+            <span class="n">response</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">df</span>
+
+        <span class="k">return</span> <span class="n">response</span></div>
+
+<div class="viewcode-block" id="DataSets.show_records"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.show_records">[docs]</a>    <span class="k">def</span> <span class="nf">show_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">data_set_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show data set records. By default 10 records will be shown.</span>
+
+<span class="sd">        :param str data_set_id: ID of the data set.</span>
+<span class="sd">        :param limit: Maximal number of fetched rows. By default set to 10. (optional)</span>
+<span class="sd">        :type limit: int</span>
+<span class="sd">        :return: None</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; client.data_sets.show_records(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">records</span><span class="p">:</span> <span class="s1">&#39;DataFrame&#39;</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_list_of_records</span><span class="p">(</span>
+            <span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+            <span class="n">output_type</span><span class="o">=</span><span class="s1">&#39;pandas&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">result</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">records</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">col_names</span> <span class="o">=</span> <span class="n">records</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="n">Table</span><span class="p">(</span><span class="n">col_names</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+            <span class="n">default_limit</span><span class="o">=</span><span class="n">_DEFAULT_LIST_LENGTH</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Data Set </span><span class="si">{}</span><span class="s2"> Records&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">data_set_id</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataSets.print_records_schema"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.print_records_schema">[docs]</a>    <span class="k">def</span> <span class="nf">print_records_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_set_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show data set records. By default 10 records will be shown.</span>
+
+<span class="sd">        :param str data_set_id: ID of the data set.</span>
+<span class="sd">        :return: None</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; client.data_sets.print_records_schema(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">data_schema</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">schema_records</span> <span class="o">=</span> <span class="p">[[</span><span class="n">field</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                           <span class="n">field</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+                           <span class="n">field</span><span class="p">[</span><span class="s1">&#39;nullable&#39;</span><span class="p">]</span>
+                           <span class="p">]</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]]</span>
+
+        <span class="n">Table</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;nullable&#39;</span><span class="p">],</span> <span class="n">schema_records</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Schema of </span><span class="si">{}</span><span class="s1"> data set&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_set_id</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="DataSets.get_records_count"><a class="viewcode-back" href="../../index.html#ibm_watson_openscale.data_sets.DataSets.get_records_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_records_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                          <span class="n">data_set_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Count data set records.</span>
+
+<span class="sd">        :param data_set_id: ID of the data set.</span>
+<span class="sd">        :return: int</span>
+
+<span class="sd">        A way you might use me is:</span>
+
+<span class="sd">        &gt;&gt;&gt; number_of_records = client.data_sets.get_records_count(data_set_id=&#39;997b1474-00d2-4g05-ac02-287ebfc603b5&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_list_of_records</span><span class="p">(</span><span class="n">data_set_id</span><span class="o">=</span><span class="n">data_set_id</span><span class="p">,</span> <span class="n">include_total_count</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># note: issue: planning-sdk-squad #1367</span>
+        <span class="c1">#return response.result.total_count</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;total_count&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on May 29, 2023.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

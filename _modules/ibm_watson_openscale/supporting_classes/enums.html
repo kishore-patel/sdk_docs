@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ibm_watson_openscale.supporting_classes.enums &mdash; IBM Watson OpenScale 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/default.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            IBM Watson OpenScale
+          </a>
+              <div class="version">
+                1.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">IBM Watson OpenScale</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ibm_watson_openscale.supporting_classes.enums</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ibm_watson_openscale.supporting_classes.enums</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+
+<span class="c1"># Copyright 2020 IBM All Rights Reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#      http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="c1"># TODO: Rewrite each _has_value() method to be part of the base class</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+
+<div class="viewcode-block" id="InputDataType"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.InputDataType">[docs]</a><span class="k">class</span> <span class="nc">InputDataType</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes possible model input data types.</span>
+
+<span class="sd">    Contains: [STRUCTURED, UNSTRUCTURED_IMAGE, UNSTRUCTURED_TEXT, UNSTRUCTURED_AUDIO, UNSTRUCTURED_VIDEO]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STRUCTURED</span> <span class="o">=</span> <span class="s1">&#39;structured&#39;</span>
+    <span class="n">UNSTRUCTURED_IMAGE</span> <span class="o">=</span> <span class="s1">&#39;unstructured_image&#39;</span>
+    <span class="n">UNSTRUCTURED_TEXT</span> <span class="o">=</span> <span class="s1">&#39;unstructured_text&#39;</span>
+    <span class="n">UNSTRUCTURED_AUDIO</span> <span class="o">=</span> <span class="s1">&#39;unstructured_audio&#39;</span>
+    <span class="n">UNSTRUCTURED_VIDEO</span> <span class="o">=</span> <span class="s1">&#39;unstructured_video&#39;</span></div>
+
+
+<div class="viewcode-block" id="DeploymentTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.DeploymentTypes">[docs]</a><span class="k">class</span> <span class="nc">DeploymentTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes possible model deployment types.</span>
+
+<span class="sd">    Contains: [ONLINE]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ONLINE</span> <span class="o">=</span> <span class="s1">&#39;online&#39;</span></div>
+
+
+<div class="viewcode-block" id="RecordsFormatTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.RecordsFormatTypes">[docs]</a><span class="k">class</span> <span class="nc">RecordsFormatTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes possible format types for getting list of records.</span>
+
+<span class="sd">    Contains: [DICT, LIST]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DICT</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span>
+    <span class="n">LIST</span> <span class="o">=</span> <span class="s1">&#39;list&#39;</span></div>
+
+
+<div class="viewcode-block" id="FeedbackType"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.FeedbackType">[docs]</a><span class="k">class</span> <span class="nc">FeedbackType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes supported types of feedback format.</span>
+
+<span class="sd">    Contains: [WML, DICT, CSV]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">WML</span> <span class="o">=</span> <span class="s1">&#39;WML&#39;</span>
+    <span class="n">DICT</span> <span class="o">=</span> <span class="s1">&#39;DICT&#39;</span>
+    <span class="n">CSV</span> <span class="o">=</span> <span class="s1">&#39;CSV&#39;</span>
+    <span class="n">PAYLOAD</span> <span class="o">=</span> <span class="s1">&#39;PAYLOAD&#39;</span>
+    <span class="n">LIST_OF_DICT</span> <span class="o">=</span> <span class="s1">&#39;LIST_OF_DICT&#39;</span>
+
+<div class="viewcode-block" id="FeedbackType.has_value"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.FeedbackType.has_value">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">has_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_value2member_map_</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a feedback type. Use one of: </span><span class="si">{}</span><span class="s2"> as a feedback type.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">FeedbackType</span><span class="p">]</span>
+            <span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="ServiceTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.ServiceTypes">[docs]</a><span class="k">class</span> <span class="nc">ServiceTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes supported types of service.</span>
+
+<span class="sd">    Contains: [WATSON_MACHINE_LEARNING, AMAZON_SAGEMAKER,</span>
+<span class="sd">                AZURE_MACHINE_LEARNING, CUSTOM_MACHINE_LEARNING,</span>
+<span class="sd">                SPSS_COLLABORATION_AND_DEPLOYMENT_SERVICES,</span>
+<span class="sd">                AZURE_MACHINE_LEARNING_SERVICE]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">WATSON_MACHINE_LEARNING</span> <span class="o">=</span> <span class="s2">&quot;watson_machine_learning&quot;</span>
+    <span class="n">AMAZON_SAGEMAKER</span> <span class="o">=</span> <span class="s2">&quot;amazon_sagemaker&quot;</span>
+    <span class="n">AZURE_MACHINE_LEARNING</span> <span class="o">=</span> <span class="s2">&quot;azure_machine_learning&quot;</span>
+    <span class="n">CUSTOM_MACHINE_LEARNING</span> <span class="o">=</span> <span class="s2">&quot;custom_machine_learning&quot;</span>
+    <span class="n">SPSS_COLLABORATION_AND_DEPLOYMENT_SERVICES</span> <span class="o">=</span> <span class="s1">&#39;spss_collaboration_and_deployment_services&#39;</span>
+    <span class="n">AZURE_MACHINE_LEARNING_SERVICE</span> <span class="o">=</span> <span class="s2">&quot;azure_machine_learning_service&quot;</span></div>
+
+
+<div class="viewcode-block" id="ResponseTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.ResponseTypes">[docs]</a><span class="k">class</span> <span class="nc">ResponseTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes supported types of output format.</span>
+
+<span class="sd">    Contains: [PANDAS, PYTHON]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PANDAS</span> <span class="o">=</span> <span class="s2">&quot;pandas&quot;</span>
+    <span class="n">PYTHON</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span></div>
+
+
+<div class="viewcode-block" id="TargetTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.TargetTypes">[docs]</a><span class="k">class</span> <span class="nc">TargetTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes supported types of target format.</span>
+
+<span class="sd">    Contains: [SUBSCRIPTION, BUSINESS_APPLICATION, INSTANCE, DATA_MART]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SUBSCRIPTION</span> <span class="o">=</span> <span class="s1">&#39;subscription&#39;</span>
+    <span class="n">BUSINESS_APPLICATION</span> <span class="o">=</span> <span class="s1">&#39;business_application&#39;</span>
+    <span class="n">INSTANCE</span> <span class="o">=</span> <span class="s1">&#39;instance&#39;</span>
+    <span class="n">DATA_MART</span> <span class="o">=</span> <span class="s2">&quot;data_mart&quot;</span></div>
+
+
+<div class="viewcode-block" id="FormatTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.FormatTypes">[docs]</a><span class="k">class</span> <span class="nc">FormatTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format of the returned data. `full` format compared to `compact` is additive and</span>
+<span class="sd">    contains `sources` part.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">COMPACT</span> <span class="o">=</span> <span class="s1">&#39;compact&#39;</span>
+    <span class="n">FULL</span> <span class="o">=</span> <span class="s1">&#39;full&#39;</span></div>
+
+
+<div class="viewcode-block" id="IntervalTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.IntervalTypes">[docs]</a><span class="k">class</span> <span class="nc">IntervalTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Time unit in which metrics are grouped and aggregated, interval by interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MINUTE</span> <span class="o">=</span> <span class="s1">&#39;minute&#39;</span>
+    <span class="n">HOUR</span> <span class="o">=</span> <span class="s1">&#39;hour&#39;</span>
+    <span class="n">DAY</span> <span class="o">=</span> <span class="s1">&#39;day&#39;</span>
+    <span class="n">WEEK</span> <span class="o">=</span> <span class="s1">&#39;week&#39;</span>
+    <span class="n">MONTH</span> <span class="o">=</span> <span class="s1">&#39;month&#39;</span>
+    <span class="n">YEAR</span> <span class="o">=</span> <span class="s1">&#39;year&#39;</span></div>
+
+
+<div class="viewcode-block" id="AggregationTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.AggregationTypes">[docs]</a><span class="k">class</span> <span class="nc">AggregationTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Comma delimited function list constructed from metric name and function, e.g.</span>
+<span class="sd">    `agg=metric_name:count,:last` that defines aggregations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LAST</span> <span class="o">=</span> <span class="s1">&#39;last&#39;</span>
+    <span class="n">FIRST</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span>
+    <span class="n">MAX</span> <span class="o">=</span> <span class="s1">&#39;max&#39;</span>
+    <span class="n">MIN</span> <span class="o">=</span> <span class="s1">&#39;min&#39;</span>
+    <span class="n">SUM</span> <span class="o">=</span> <span class="s1">&#39;sum&#39;</span>
+    <span class="n">AVG</span> <span class="o">=</span> <span class="s1">&#39;avg&#39;</span>
+    <span class="n">COUNT</span> <span class="o">=</span> <span class="s1">&#39;count&#39;</span>
+    <span class="n">STDDEV</span> <span class="o">=</span> <span class="s1">&#39;stddev&#39;</span></div>
+
+
+<div class="viewcode-block" id="OnErrorTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.OnErrorTypes">[docs]</a><span class="k">class</span> <span class="nc">OnErrorTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    expected behaviour on error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STOP</span> <span class="o">=</span> <span class="s1">&#39;stop&#39;</span>
+    <span class="n">CONTINUE</span> <span class="o">=</span> <span class="s1">&#39;continue&#39;</span></div>
+
+
+<div class="viewcode-block" id="ContentTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.ContentTypes">[docs]</a><span class="k">class</span> <span class="nc">ContentTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The type of the input. A character encoding can be specified by including a</span>
+<span class="sd">    `charset` parameter. For example, &#39;text/csv;charset=utf-8&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">APPLICATION_JSON</span> <span class="o">=</span> <span class="s1">&#39;application/json&#39;</span>
+    <span class="n">TEXT_CSV</span> <span class="o">=</span> <span class="s1">&#39;text/csv&#39;</span></div>
+
+
+<div class="viewcode-block" id="DataSetTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.DataSetTypes">[docs]</a><span class="k">class</span> <span class="nc">DataSetTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    type of the data set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MANUAL_LABELING</span> <span class="o">=</span> <span class="s1">&#39;manual_labeling&#39;</span>
+    <span class="n">PAYLOAD_LOGGING</span> <span class="o">=</span> <span class="s1">&#39;payload_logging&#39;</span>
+    <span class="n">FEEDBACK</span> <span class="o">=</span> <span class="s1">&#39;feedback&#39;</span>
+    <span class="n">BUSINESS_PAYLOAD</span> <span class="o">=</span> <span class="s1">&#39;business_payload&#39;</span>
+    <span class="n">CUSTOM</span> <span class="o">=</span> <span class="s1">&#39;custom&#39;</span></div>
+
+
+<div class="viewcode-block" id="MetricThresholdTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.MetricThresholdTypes">[docs]</a><span class="k">class</span> <span class="nc">MetricThresholdTypes</span><span class="p">:</span>
+    <span class="n">LOWER_LIMIT</span> <span class="o">=</span> <span class="s2">&quot;lower_limit&quot;</span>
+    <span class="n">UPPER_LIMIT</span> <span class="o">=</span> <span class="s2">&quot;upper_limit&quot;</span></div>
+
+
+<div class="viewcode-block" id="StatusStateType"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.StatusStateType">[docs]</a><span class="k">class</span> <span class="nc">StatusStateType</span><span class="p">:</span>
+    <span class="n">ACTIVE</span> <span class="o">=</span> <span class="s2">&quot;active&quot;</span>
+    <span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">&quot;running&quot;</span>
+    <span class="n">FINISHED</span> <span class="o">=</span> <span class="s2">&quot;finished&quot;</span>
+    <span class="n">PREPARING</span> <span class="o">=</span> <span class="s2">&quot;preparing&quot;</span>
+    <span class="n">SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;success&quot;</span>
+    <span class="n">COMPLETED</span> <span class="o">=</span> <span class="s2">&quot;completed&quot;</span>
+    <span class="n">FAILURE</span> <span class="o">=</span> <span class="s2">&quot;failure&quot;</span>
+    <span class="n">FAILED</span> <span class="o">=</span> <span class="s2">&quot;failed&quot;</span>
+    <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
+    <span class="n">CANCELLED</span> <span class="o">=</span> <span class="s2">&quot;cancelled&quot;</span>
+    <span class="n">CANCELED</span> <span class="o">=</span> <span class="s2">&quot;canceled&quot;</span></div>
+
+
+<div class="viewcode-block" id="DatabaseType"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.DatabaseType">[docs]</a><span class="k">class</span> <span class="nc">DatabaseType</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes possible options of choosing database type.</span>
+
+<span class="sd">    Contains: [POSTGRESQL, DB2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">POSTGRESQL</span> <span class="o">=</span> <span class="s1">&#39;postgresql&#39;</span>
+    <span class="n">DB2</span> <span class="o">=</span> <span class="s1">&#39;db2&#39;</span></div>
+
+
+<div class="viewcode-block" id="Choose"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.Choose">[docs]</a><span class="k">class</span> <span class="nc">Choose</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes possible options of choosing result from table filtering when only one result is required.</span>
+
+<span class="sd">    Contains: [FIRST, LAST, RANDOM]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FIRST</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span>
+    <span class="n">LAST</span> <span class="o">=</span> <span class="s1">&#39;last&#39;</span>
+    <span class="n">RANDOM</span> <span class="o">=</span> <span class="s1">&#39;random&#39;</span></div>
+
+
+<div class="viewcode-block" id="ProblemType"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.ProblemType">[docs]</a><span class="k">class</span> <span class="nc">ProblemType</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Describes possible model (problem) types.</span>
+
+<span class="sd">    Contains: [regression, binary, multiclass]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">REGRESSION</span> <span class="o">=</span> <span class="s1">&#39;regression&#39;</span>
+    <span class="n">BINARY_CLASSIFICATION</span> <span class="o">=</span> <span class="s1">&#39;binary&#39;</span>
+    <span class="n">MULTICLASS_CLASSIFICATION</span> <span class="o">=</span> <span class="s1">&#39;multiclass&#39;</span></div>
+
+
+<div class="viewcode-block" id="AssetTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.AssetTypes">[docs]</a><span class="k">class</span> <span class="nc">AssetTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;model&quot;</span>
+    <span class="n">FUNCTION</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span></div>
+
+
+<div class="viewcode-block" id="ExpectedDirectionTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.ExpectedDirectionTypes">[docs]</a><span class="k">class</span> <span class="nc">ExpectedDirectionTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    the indicator specifying the expected direction of the monotonic metric values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INCREASING</span> <span class="o">=</span> <span class="s2">&quot;increasing&quot;</span>
+    <span class="n">DECREASING</span> <span class="o">=</span> <span class="s2">&quot;decreasing&quot;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span></div>
+
+
+<div class="viewcode-block" id="SchemaUpdateModeTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.SchemaUpdateModeTypes">[docs]</a><span class="k">class</span> <span class="nc">SchemaUpdateModeTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+    <span class="n">AUTO</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span></div>
+
+
+<div class="viewcode-block" id="IntegratedSystemTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.IntegratedSystemTypes">[docs]</a><span class="k">class</span> <span class="nc">IntegratedSystemTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">OPEN_PAGES</span> <span class="o">=</span> <span class="s2">&quot;open_pages&quot;</span>
+    <span class="n">WATSON_DATA_CATALOG</span> <span class="o">=</span> <span class="s2">&quot;watson_data_catalog&quot;</span>
+    <span class="n">SLACK</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span></div>
+
+
+<div class="viewcode-block" id="OperationTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.OperationTypes">[docs]</a><span class="k">class</span> <span class="nc">OperationTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The operation to be performed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ADD</span> <span class="o">=</span> <span class="s2">&quot;add&quot;</span>
+    <span class="n">REMOVE</span> <span class="o">=</span> <span class="s2">&quot;remove&quot;</span>
+    <span class="n">REPLACE</span> <span class="o">=</span> <span class="s2">&quot;replace&quot;</span>
+    <span class="n">MOVE</span> <span class="o">=</span> <span class="s2">&quot;move&quot;</span>
+    <span class="n">COPY</span> <span class="o">=</span> <span class="s2">&quot;copy&quot;</span>
+    <span class="n">TEST</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span></div>
+
+
+<div class="viewcode-block" id="ScheduleRepeatTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.ScheduleRepeatTypes">[docs]</a><span class="k">class</span> <span class="nc">ScheduleRepeatTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The type of interval to monitor the target.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MINUTE</span> <span class="o">=</span> <span class="s2">&quot;minute&quot;</span>
+    <span class="n">HOUR</span> <span class="o">=</span> <span class="s2">&quot;hour&quot;</span>
+    <span class="n">DAY</span> <span class="o">=</span> <span class="s2">&quot;day&quot;</span>
+    <span class="n">WEEK</span> <span class="o">=</span> <span class="s2">&quot;week&quot;</span>
+    <span class="n">MONTH</span> <span class="o">=</span> <span class="s2">&quot;month&quot;</span>
+    <span class="n">YEAR</span> <span class="o">=</span> <span class="s2">&quot;year&quot;</span></div>
+
+
+<div class="viewcode-block" id="TriggerTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.TriggerTypes">[docs]</a><span class="k">class</span> <span class="nc">TriggerTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An identifier representing the source that triggered the run request (optional).</span>
+<span class="sd">    One of: event, scheduler, user, webhook.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EVENT</span> <span class="o">=</span> <span class="s2">&quot;event&quot;</span>
+    <span class="n">SCHEDULER</span> <span class="o">=</span> <span class="s2">&quot;scheduler&quot;</span>
+    <span class="n">USER</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+    <span class="n">WEBHOOK</span> <span class="o">=</span> <span class="s2">&quot;webhook&quot;</span>
+    <span class="n">BKPI_MANAGER</span> <span class="o">=</span> <span class="s2">&quot;bkpi_manager&quot;</span></div>
+
+
+<div class="viewcode-block" id="NotificationServiceTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.NotificationServiceTypes">[docs]</a><span class="k">class</span> <span class="nc">NotificationServiceTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The messaging service to use, for example, slack or email, or list_ref to indicate</span>
+<span class="sd">    a previously created notification list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SLACK</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span>
+    <span class="n">EMAIL</span> <span class="o">=</span> <span class="s2">&quot;email&quot;</span>
+    <span class="n">LIST_REF</span> <span class="o">=</span> <span class="s2">&quot;list_ref&quot;</span></div>
+
+
+<div class="viewcode-block" id="MessageFormatTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.MessageFormatTypes">[docs]</a><span class="k">class</span> <span class="nc">MessageFormatTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The format of the message text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;text&quot;</span>
+    <span class="n">HTML</span> <span class="o">=</span> <span class="s2">&quot;html&quot;</span></div>
+
+
+<div class="viewcode-block" id="PayloadFieldTypes"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.PayloadFieldTypes">[docs]</a><span class="k">class</span> <span class="nc">PayloadFieldTypes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STRING</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span>
+    <span class="n">NUMBER</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span></div>
+
+
+<div class="viewcode-block" id="TrainingDataReferenceType"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.TrainingDataReferenceType">[docs]</a><span class="k">class</span> <span class="nc">TrainingDataReferenceType</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Type of the storage.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DB2</span> <span class="o">=</span> <span class="s2">&quot;db2&quot;</span>
+    <span class="n">COS</span> <span class="o">=</span> <span class="s2">&quot;cos&quot;</span></div>
+    
+<div class="viewcode-block" id="CP4DWMLLocation"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.CP4DWMLLocation">[docs]</a><span class="k">class</span> <span class="nc">CP4DWMLLocation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CP4D WML Location.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">CPD_LOCAL</span> <span class="o">=</span> <span class="s1">&#39;cpd_local&#39;</span>
+    <span class="n">CPD_REMOTE</span> <span class="o">=</span> <span class="s1">&#39;cpd_remote&#39;</span>
+    <span class="n">CLOUD_REMOTE</span> <span class="o">=</span> <span class="s1">&#39;cloud_remote&#39;</span> </div>
+    
+<div class="viewcode-block" id="FairnessMetrics"><a class="viewcode-back" href="../../../index.html#ibm_watson_openscale.supporting_classes.enums.FairnessMetrics">[docs]</a><span class="k">class</span> <span class="nc">FairnessMetrics</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">DISPARATE_IMPACT</span> <span class="o">=</span> <span class="s2">&quot;fairness_value&quot;</span>
+    <span class="n">STATISTICAL_PARITY_DIFFERENCE</span> <span class="o">=</span> <span class="s2">&quot;statistical_parity_difference&quot;</span>
+    <span class="n">AVERAGE_ODDS_DIFFERENCE</span> <span class="o">=</span> <span class="s2">&quot;average_odds_difference&quot;</span>
+    <span class="n">AVERAGE_ABS_ODDS_DIFFERENCE</span> <span class="o">=</span> <span class="s2">&quot;average_abs_odds_difference&quot;</span>
+    <span class="n">FALSE_NEGATIVE_RATE_DIFFERENCE</span> <span class="o">=</span> <span class="s2">&quot;false_negative_rate_difference&quot;</span>
+    <span class="n">FALSE_POSITIVE_RATE_DIFFERENCE</span> <span class="o">=</span> <span class="s2">&quot;false_positive_rate_difference&quot;</span>
+    <span class="n">FALSE_DISCOVERY_RATE_DIFFERENCE</span> <span class="o">=</span> <span class="s2">&quot;false_discovery_rate_difference&quot;</span>
+    <span class="n">FALSE_OMISSION_RATE_DIFFERENCE</span> <span class="o">=</span> <span class="s2">&quot;false_omission_rate_difference&quot;</span>
+    <span class="n">ERROR_RATE_DIFFERENCE</span> <span class="o">=</span> <span class="s2">&quot;error_rate_difference&quot;</span></div>
+           
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on May 29, 2023.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
